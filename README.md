@@ -1,4 +1,4 @@
-# Simple Flask Blog
+# Simple Flask Blog ⚗️
 This is a simple blog built with Flask. It allows you to create, edit, and view posts, showcasing basic web development concepts like routing, templates, and forms. This project serves as an easy-to-follow example of a lightweight blog app, perfect for learning or personal projects.
 
 ## Table of Contents
@@ -24,15 +24,26 @@ This is a simple blog built with Flask. It allows you to create, edit, and view 
 
 ## How to Run
 1. Clone or download the repository.
-2. Install dependencies:
+2. Navigate to the project directory:
+   ```bash
+   cd Flask-Chronicles
+   ```
+3. Create a virtual environment:
+    ```bash
+    python -m venv venv
+
+    # Activate the virtual environment
+    source venv/bin/activate
+    ```
+4. Install dependencies:
     ```bash
     pip install -r requirements.txt
     ```
-3. Run the app:
+5. Run the app:
     ```bash
     python app.py
     ```
-4. Navigate to http://127.0.0.1:5000/ in your browser to view the blog.
+6. Navigate to http://127.0.0.1:5000/ in your browser to view the blog.
 
 ## Usage
 - The app includes simple routes for viewing, creating, and managing posts.
