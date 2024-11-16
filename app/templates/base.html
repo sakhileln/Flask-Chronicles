@@ -4,7 +4,7 @@
         {% if title %}
         <title>{{ title }} - Flask Chronicles</title>
         {% else %}
-        <title>Welcome to Flask Chrnoicles</title>
+        <title>Flask Chrnoicles</title>
         {% endif %}
     </head>
     <body>
@@ -14,6 +14,15 @@
             <a href="/login">Login</a>
         </div>
         <hr>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
         {% block content %}{% endblock %}
     </body>
 </html>
