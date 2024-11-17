@@ -2,12 +2,13 @@ from app import app, db
 from app.models import User
 from app.forms import LoginForm
 from flask import render_template, flash, redirect, url_for
-from flask_login import current_user, login_user, logout_user
+from flask_login import current_user, login_user, logout_user, login_required
 import sqlalchemy as sa
 
 
 @app.route("/")
 @app.route("/index")
+@login_required
 def index():
     user = {"username": "Sakhile"}
     posts = [
