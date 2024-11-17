@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 import sqlalchemy as sa
 import sqlalchemy.orm as so
 from typing import Optional
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class User(db.Model):
@@ -73,3 +74,25 @@ class Post(db.Model):
             str: Astring in the format "<Post body>" for debugging.
         """
         return f"<Post {self.body}>"
+
+    def set_password(self, password: str) -> None:
+        """
+        Sets the password for the user by hashing the provided plain-text password.
+
+        Args:
+            password (str): The plain-text password that needs to be hashed and stored.
+        Returns:
+            None
+        """
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password: str) -> bool:
+        """
+        Checks if the provided plain-text password matches the stored hashes password.
+
+        Args:
+            passowrd (str): The plain-text password to check against the stored hash.
+        Returns:
+            bool: True if password matches the stored password, False otherwise
+        """
+        return check_password_hash(self.password_hash, password)
