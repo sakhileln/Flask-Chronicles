@@ -1,11 +1,13 @@
-from app import db
+from app import db, login
 from datetime import datetime, timezone
+from flask_login import UserMixin
 import sqlalchemy as sa
 import sqlalchemy.orm as so
 from typing import Optional
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     """
     A class repersenting a user in the database
 
@@ -38,6 +40,28 @@ class User(db.Model):
             str: A string in the format "<User username>" for debugging.
         """
         return "<User {}>".format(self.username)
+
+    def set_password(self, password: str) -> None:
+        """
+        Sets the password for the user by hashing the provided plain-text password.
+
+        Args:
+            password (str): The plain-text password that needs to be hashed and stored.
+        Returns:
+            None
+        """
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password: str) -> bool:
+        """
+        Checks if the provided plain-text password matches the stored hashes password.
+
+        Args:
+            passowrd (str): The plain-text password to check against the stored hash.
+        Returns:
+            bool: True if password matches the stored password, False otherwise
+        """
+        return check_password_hash(self.password_hash, password)
 
 
 class Post(db.Model):
@@ -73,3 +97,17 @@ class Post(db.Model):
             str: Astring in the format "<Post body>" for debugging.
         """
         return f"<Post {self.body}>"
+
+
+# Flask-Login user loader function
+@login.user_loader
+def load_user(id):
+    """
+    Loads a user from the database by their ID.
+
+    Args:
+        id (int): The ID of the user to load.
+    Returns:
+        User: The user object corresponding to the given ID, or None if not found.
+    """
+    return db.session.get(User, int(id))
