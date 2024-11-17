@@ -1,12 +1,13 @@
 from app import db
 from datetime import datetime, timezone
+from flask_login import UserMixin
 import sqlalchemy as sa
 import sqlalchemy.orm as so
 from typing import Optional
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     """
     A class repersenting a user in the database
 
