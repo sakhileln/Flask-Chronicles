@@ -1,4 +1,4 @@
-from app import db
+from app import db, login
 from datetime import datetime, timezone
 from flask_login import UserMixin
 import sqlalchemy as sa
@@ -97,3 +97,17 @@ class Post(db.Model):
             str: Astring in the format "<Post body>" for debugging.
         """
         return f"<Post {self.body}>"
+
+
+# Flask-Login user loader function
+@login.user_loader
+def load_user(id):
+    """
+    Loads a user from the database by their ID.
+
+    Args:
+        id (int): The ID of the user to load.
+    Returns:
+        User: The user object corresponding to the given ID, or None if not found.
+    """
+    return db.session.get(User, int(id))
