@@ -22,7 +22,7 @@ def index():
             "body": "Final preparations for Starship Flight 6 🚀 on 18 November!",
         },
     ]
-    return render_template("index.html", title="Home", user=user, posts=posts)
+    return render_template("index.html", title="Home Page", posts=posts)
 
 
 @app.route("/login", methods=["GET", "POST"])
