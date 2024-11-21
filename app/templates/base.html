@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <style>
+            footer {
+              text-align: center;
+              padding: 3px;
+              background-color: rgb(173, 169, 167);
+              color: white;
+            }
+        </style>
         {% if title %}
         <title>{{ title }} - Flask Chronicles</title>
         {% else %}
@@ -14,6 +22,7 @@
             {% if current_user.is_anonymous %}
             <a href="{{ url_for('login') }}">Login</a>
             {% else %}
+            <a href="{{ url_for('user', username=current_user.username) }}">Profile</a>
             <a href="{{ url_for('logout') }}">Logout</a>
             {% endif %}
         </div>
@@ -28,5 +37,11 @@
         {% endif %}
         {% endwith %}
         {% block content %}{% endblock %}
+
+        <footer>
+            <p>Copyright: Space Aliens &copy;</p>
+            <p>Author: Sakhile and the Aliens! 👽<br>
+            <a href="mailto:sakhile@mars.io">sakhile@mars.io</a></p>
+        </footer>
     </body>
 </html>
