@@ -1,1 +1,2 @@
 FLASK_APP=flask_chronicles.py
+FLASK_DEBUG=1
