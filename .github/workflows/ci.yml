@@ -43,4 +43,4 @@ jobs:
           python -m pip install pylint
       - name: Run Pylint
         run: |
-          pylint --ignore-paths=migrations .  # Disable migrations and virtual environment
+          pylint --ignore-paths=migrations .  # Disable migrations folder check
