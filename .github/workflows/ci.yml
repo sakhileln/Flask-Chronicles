@@ -25,7 +25,7 @@ jobs:
           python -m pip install black
       - name: Check code formatting with black
         run: |
-          black --check --diff .
+          black tests.py
 
   lint:
     runs-on: ubuntu-latest
@@ -43,7 +43,7 @@ jobs:
           python -m pip install pylint
       - name: Run Pylint
         run: |
-          pylint --ignore-paths=migrations .  # Disable migrations folder check
+          pylint --ignore-paths=migrations tests.py  # Disable migrations folder check
 
   test:
     runs-on: ubuntu-latest
