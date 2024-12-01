@@ -75,7 +75,8 @@ def user(username):
         {"author": user, "body": "Test post #1"},
         {"author": user, "body": "Siyalinga namba #2"},
     ]
-    return render_template("user.html", user=user, posts=posts)
+    form = EmptyForm()
+    return render_template("user.html", user=user, posts=posts, form=form)
 
 
 @app.before_request
