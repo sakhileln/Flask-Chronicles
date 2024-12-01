@@ -11,7 +11,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 followers = sa.Table(
     "followers",
     db.metadata,
-    sa.Column("follower_id", sa.Integer, sa.ForeignKey("user.id")),
+    sa.Column(
+        "follower_id", sa.Integer, sa.ForeignKey("user.id"), primary_key=True
+    ),
     sa.Column(
         "followed_id", sa.Integer, sa.ForeignKey("user.id"), primary_key=True
     ),
