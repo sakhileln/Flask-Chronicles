@@ -8,6 +8,16 @@ from typing import Optional
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
+followers = sa.Table(
+    "followers",
+    db.metadata,
+    sa.Column("follower_id", sa.Integer, sa.ForeignKey("user.id")),
+    sa.Column(
+        "followed_id", sa.Integer, sa.ForeignKey("user.id"), primary_key=True
+    ),
+)
+
+
 class User(UserMixin, db.Model):
     """
     A class repersenting a user in the database
@@ -25,9 +35,13 @@ class User(UserMixin, db.Model):
 
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     username: so.Mapped[str] = so.mapped_column(sa.String(64), unique=True)
-    email: so.Mapped[str] = so.mapped_column(sa.String(120), index=True, unique=True)
+    email: so.Mapped[str] = so.mapped_column(
+        sa.String(120), index=True, unique=True
+    )
     password_hash: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))
-    posts: so.WriteOnlyMapped["Post"] = so.relationship(back_populates="author")
+    posts: so.WriteOnlyMapped["Post"] = so.relationship(
+        back_populates="author"
+    )
     about_me: so.Mapped[Optional[str]] = so.mapped_column(sa.String(140))
     last_seen: so.Mapped[Optional[datetime]] = so.mapped_column(
         default=lambda: datetime.now(timezone.utc)
@@ -66,7 +80,9 @@ class User(UserMixin, db.Model):
 
     def avatar(self, size):
         digest = md5(self.email.lower().encode("utf-8")).hexdigest()
-        return f"https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}'"
+        return (
+            f"https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}'"
+        )
 
 
 class Post(db.Model):
@@ -89,7 +105,9 @@ class Post(db.Model):
     timestamp: so.Mapped[datetime] = so.mapped_column(
         index=True, default=lambda: datetime.now(timezone.utc)
     )
-    user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id), index=True)
+    user_id: so.Mapped[int] = so.mapped_column(
+        sa.ForeignKey(User.id), index=True
+    )
     author: so.Mapped[User] = so.relationship(back_populates="posts")
 
     def __repr__(self) -> str:
