@@ -117,6 +117,63 @@ class UserModelCase(unittest.TestCase):
         self.assertEqual(u1.following_count(), 0)
         self.assertEqual(u2.followers_count(), 0)
 
+    def test_follow_posts(self):
+        """
+        Test retrieving posts from followed users.
+
+        Verifies that:
+        - A user sees posts from users they are following.
+        - The posts are returned in the correct order based on timestamp.
+        """
+        # create four users
+        u1 = User(username="sakhi", email="sakhi@example.com")
+        u2 = User(username="zethe", email="zethe@example.com")
+        u3 = User(username="zothi", email="zothi@example.com")
+        u4 = User(username="no", email="no@example.com")
+        db.session.add_all([u1, u2, u3, u4])
+
+        # create four posts
+        now = datetime.now(timezone.utc)
+        p1 = Post(
+            body="post from sakhi",
+            author=u1,
+            timestamp=now + timedelta(seconds=1),
+        )
+        p2 = Post(
+            body="post from zethe",
+            author=u2,
+            timestamp=now + timedelta(seconds=4),
+        )
+        p3 = Post(
+            body="post from zothi",
+            author=u3,
+            timestamp=now + timedelta(seconds=3),
+        )
+        p4 = Post(
+            body="post from no",
+            author=u4,
+            timestamp=now + timedelta(seconds=2),
+        )
+        db.session.add_all([p1, p2, p3, p4])
+        db.session.commit()
+
+        # setup the followers
+        u1.follow(u2)  # sakhi follows zethe
+        u1.follow(u4)  # sakhi follows no
+        u2.follow(u3)  # zethe follows zothi
+        u3.follow(u4)  # zothi follows no
+        db.session.commit()
+
+        # check the following posts of each user
+        f1 = db.session.scalars(u1.following_posts()).all()
+        f2 = db.session.scalars(u2.following_posts()).all()
+        f3 = db.session.scalars(u3.following_posts()).all()
+        f4 = db.session.scalars(u4.following_posts()).all()
+        self.assertEqual(f1, [p2, p4, p1])
+        self.assertEqual(f2, [p2, p3])
+        self.assertEqual(f3, [p3, p4])
+        self.assertEqual(f4, [p4])
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
