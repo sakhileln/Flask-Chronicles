@@ -120,6 +120,17 @@ class User(UserMixin, db.Model):
         )
         return db.session.scalar(query)
 
+    def following_posts(self):
+        Author = so.aliased(User)
+        Follower = so.aliased(User)
+        return (
+            sa.select(Post)
+            .join(Post.author.of_type(Author))
+            .join(Author.followers.of_type(Follower))
+            .where(Follower.id == self.id)
+            .order_by(Post.timestamp.desc())
+        )
+
 
 class Post(db.Model):
     """
