@@ -68,4 +68,6 @@ class EditProfileForm(FlaskForm):
 
 
 class EmptyForm(FlaskForm):
+    """Empty form for following and unfollowing."""
+
     submit = SubmitField("Submit")
