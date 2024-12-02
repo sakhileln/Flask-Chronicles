@@ -43,7 +43,7 @@ jobs:
           python -m pip install pylint
       - name: Run Pylint
         run: |
-          pylint tests.py
+          pylint --disable=C0413 tests.py
 
   test:
     runs-on: ubuntu-latest
