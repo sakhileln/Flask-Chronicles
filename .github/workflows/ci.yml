@@ -63,5 +63,9 @@ jobs:
           pip install coverage
       - name: Run Tests with coverage
         run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
           coverage run tests.py  # Running tests with coverage using pytest
           coverage report
+          deactivate
