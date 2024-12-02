@@ -43,7 +43,7 @@ jobs:
           python -m pip install pylint
       - name: Run Pylint
         run: |
-          pylint --ignore-paths=migrations --disable=C0413 tests.py  # Disable migrations folder check
+          pylint tests.py
 
   test:
     runs-on: ubuntu-latest
