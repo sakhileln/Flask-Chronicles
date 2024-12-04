@@ -25,7 +25,7 @@ def index():
         db.session.commit()
         flash("Your post is now live!")
         return redirect(url_for("index"))
-    posts = [
+    dummy_posts = [
         {
             "author": {"username": "Sakhile"},
             "body": "Plyaing with Flask, Jinja and some HTML!",
@@ -35,6 +35,7 @@ def index():
             "body": "Final preparations for Starship Flight 6 🚀 on 18 November!",
         },
     ]
+    posts = db.session.scalars(current_user.following_posts()).all()
     return render_template(
         "index.html", title="Home Page", form=form, posts=posts
     )
