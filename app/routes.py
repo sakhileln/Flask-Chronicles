@@ -162,9 +162,10 @@ def unfollow(username):
     else:
         return redirect(url_for("index"))
 
+
 @app.route("/explore")
 @login_required
 def explore():
     query = sa.select(Post).order_by(Post.timestamp.desc())
     posts = db.session.scalars(query).all()
-    return render_template("index.html", title=Explore, posts=posts)
+    return render_template("index.html", title="Explore", posts=posts)
