@@ -38,9 +38,12 @@ def index():
     posts = db.session.scalars(current_user.following_posts()).all()
     page = request.args.get("page", 1, type=int)
     posts = db.paginate(
-        current_user.following_posts(), page=page, per_page=app.config["POSTS_PER_PAGE"], error_out=sa.False
+        current_user.following_posts(),
+        page=page,
+        per_page=app.config["POSTS_PER_PAGE"],
+        error_out=False,
     )
-    
+
     return render_template(
         "index.html", title="Home Page", form=form, posts=posts.items
     )
@@ -119,9 +122,7 @@ def edit_profile():
     elif request.method == "GET":
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
-    return render_template(
-        "edit_profile.html", title="Edit Profile", form=form
-    )
+    return render_template("edit_profile.html", title="Edit Profile", form=form)
 
 
 @app.route("/follow/<username>", methods=["POST"])
@@ -129,9 +130,7 @@ def edit_profile():
 def follow(username):
     form = EmptyForm()
     if form.validate_on_submit():
-        user = db.session.scalar(
-            sa.select(User).where(User.username == username)
-        )
+        user = db.session.scalar(sa.select(User).where(User.username == username))
         if user is None:
             flash(f"User {username} not found.")
             return redirect(url_for("index"))
@@ -151,9 +150,7 @@ def follow(username):
 def unfollow(username):
     form = EmptyForm()
     if form.validate_on_submit():
-        user = db.session.scalar(
-            sa.select(User).where(User.username == username)
-        )
+        user = db.session.scalar(sa.select(User).where(User.username == username))
         if user is None:
             flash(f"User {username} not found.")
             return redirect(url_for("index"))
@@ -173,5 +170,7 @@ def unfollow(username):
 def explore():
     page = request.args.get("page", 1, type=int)
     query = sa.select(Post).order_by(Post.timestamp.desc())
-    posts = db.paginate(query, page=page, per_page=app.config["POSTS_PER_PAGE"], error_out=False)
+    posts = db.paginate(
+        query, page=page, per_page=app.config["POSTS_PER_PAGE"], error_out=False
+    )
     return render_template("index.html", title="Explore", posts=posts.items)
