@@ -41,6 +41,7 @@ jobs:
       - name: Install pylint
         run: |
           python -m pip install pylint
+          python -m pip install -r requirements.txt
       - name: Run Pylint
         run: |
           pylint --disable=C0413 --ignore-paths=migrations,venv,__pycache__ .
