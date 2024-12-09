@@ -34,8 +34,10 @@ from flask_login import current_user, login_user, logout_user, login_required
 # Local application imports
 # pylint: disable=cyclic-import
 from app import app, db
+
 # pylint: disable=cyclic-import
 from app.models import User
+
 # pylint: disable=cyclic-import
 from app.forms import LoginForm, RegistrationForm, EditProfileForm, EmptyForm
 
