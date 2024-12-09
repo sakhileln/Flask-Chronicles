@@ -255,6 +255,17 @@ def unfollow(username):
 @app.route("/explore")
 @login_required
 def explore():
+    """
+    Route for exploring all posts in descending order of their timestamp.
+    Pagination:
+    - The page number is obtained from the query parameter (`page`), defaulting to page 1.
+    - The number of posts per page is controlled by the configuration setting `POSTS_PER_PAGE`.
+    - The `next_url` and `prev_url` are generated to navigate between pages, based on the current page.
+
+    Returns:
+        A rendered template (`index.html`) displaying the posts for the current page, along with
+        navigation links for previous and next pages if applicable.
+    """
     page = request.args.get("page", 1, type=int)
     query = sa.select(Post).order_by(Post.timestamp.desc())
     posts = db.paginate(
