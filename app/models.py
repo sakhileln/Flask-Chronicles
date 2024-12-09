@@ -1,22 +1,32 @@
-from app import db, login
+"""
+This module defines the models for users and posts in the application. It uses SQLAlchemy
+for ORM and Flask-Login for user authentication. The models define the structure of the database
+and the relationships between users and posts, as well as user interactions like following
+and unfollowing other users.
+
+Classes:
+- User: Represents a user in the database with fields for username, email, password, etc.
+- Post: Represents a post in the database created by a user.
+- followers: Association table to handle the many-to-many relationship between
+            users (followers/following).
+"""
+
 from datetime import datetime, timezone
-from flask_login import UserMixin
 from hashlib import md5
+from typing import Optional
+from flask_login import UserMixin
 import sqlalchemy as sa
 import sqlalchemy.orm as so
-from typing import Optional
 from werkzeug.security import generate_password_hash, check_password_hash
+from app import db, login
 
 
+# Association table for followers (many-to-many relationship)
 followers = sa.Table(
     "followers",
     db.metadata,
-    sa.Column(
-        "follower_id", sa.Integer, sa.ForeignKey("user.id"), primary_key=True
-    ),
-    sa.Column(
-        "followed_id", sa.Integer, sa.ForeignKey("user.id"), primary_key=True
-    ),
+    sa.Column("follower_id", sa.Integer, sa.ForeignKey("user.id"), primary_key=True),
+    sa.Column("followed_id", sa.Integer, sa.ForeignKey("user.id"), primary_key=True),
 )
 
 
@@ -37,13 +47,9 @@ class User(UserMixin, db.Model):
 
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     username: so.Mapped[str] = so.mapped_column(sa.String(64), unique=True)
-    email: so.Mapped[str] = so.mapped_column(
-        sa.String(120), index=True, unique=True
-    )
+    email: so.Mapped[str] = so.mapped_column(sa.String(120), index=True, unique=True)
     password_hash: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))
-    posts: so.WriteOnlyMapped["Post"] = so.relationship(
-        back_populates="author"
-    )
+    posts: so.WriteOnlyMapped["Post"] = so.relationship(back_populates="author")
     about_me: so.Mapped[Optional[str]] = so.mapped_column(sa.String(140))
     last_seen: so.Mapped[Optional[datetime]] = so.mapped_column(
         default=lambda: datetime.now(timezone.utc)
@@ -68,7 +74,7 @@ class User(UserMixin, db.Model):
         Returns:
             str: A string in the format "<User username>" for debugging.
         """
-        return "<User {}>".format(self.username)
+        return f"<User {self.username}>"
 
     def set_password(self, password: str) -> None:
         """
@@ -93,36 +99,87 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
     def avatar(self, size):
+        """
+        Generates a Gravatar URL for the user based on their email.
+
+        Args:
+            size (int): The size of the avatar image to generate.
+        Returns:
+            str: The Gravatar URL.
+        """
         digest = md5(self.email.lower().encode("utf-8")).hexdigest()
-        return (
-            f"https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}'"
-        )
+        return f"https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}'"
 
     def follow(self, user):
+        """
+        Makes the current user follow the provided user.
+
+        Args:
+            user (User): The user to be followed.
+        Returns:
+            None
+        """
         if not self.is_following(user):
             self.following.add(user)
 
     def unfollow(self, user):
+        """
+        Makes the current user unfollow the provided user.
+
+        Args:
+            user (User): The user to be unfollowed.
+        Returns:
+            None
+        """
         if self.is_following(user):
             self.following.remove(user)
 
     def is_following(self, user):
+        """
+        Checks if the current user is following the provided user.
+
+        Args:
+            user (User): The user to check if the current user is following.
+        Returns:
+            bool: True if the user is being followed, False otherwise.
+        """
         query = self.following.select().where(User.id == user.id)
         return db.session.scalar(query) is not None
 
     def followers_count(self):
+        """
+        Returns the count of followers for the current user.
+
+        Returns:
+            int: The number of followers.
+        """
+        # pylint: disable=E1102
         query = sa.select(sa.func.count()).select_from(
             self.followers.select().subquery()
         )
         return db.session.scalar(query)
 
     def following_count(self):
+        """
+        Returns the count of users the current user is following.
+
+        Returns:
+            int: The number of users being followed.
+        """
+        # pylint: disable=E1102
         query = sa.select(sa.func.count()).select_from(
             self.following.select().subquery()
         )
         return db.session.scalar(query)
 
     def following_posts(self):
+        """
+        Returns the posts from users that the current user follows, including their own posts.
+
+        Returns:
+            sqlalchemy.orm.Query: A query object that can be executed to retrieve the posts.
+        """
+        # pylint: disable=C0103
         Author = so.aliased(User)
         Follower = so.aliased(User)
         return (
@@ -140,6 +197,7 @@ class User(UserMixin, db.Model):
         )
 
 
+# pylint: disable=too-few-public-methods
 class Post(db.Model):
     """
     A class representing a post in the database.
@@ -160,9 +218,7 @@ class Post(db.Model):
     timestamp: so.Mapped[datetime] = so.mapped_column(
         index=True, default=lambda: datetime.now(timezone.utc)
     )
-    user_id: so.Mapped[int] = so.mapped_column(
-        sa.ForeignKey(User.id), index=True
-    )
+    user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id), index=True)
     author: so.Mapped[User] = so.relationship(back_populates="posts")
 
     def __repr__(self) -> str:
@@ -175,6 +231,7 @@ class Post(db.Model):
         return f"<Post {self.body}>"
 
 
+# pylint: disable=W0622
 # Flask-Login user loader function
 @login.user_loader
 def load_user(id):

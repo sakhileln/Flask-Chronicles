@@ -12,6 +12,7 @@ This suite tests the following functionalities:
 import os
 
 os.environ["DATABASE_URL"] = "sqlite://"
+# pylint: disable=wrong-import-position
 from datetime import datetime, timezone, timedelta
 import unittest
 from app import app, db

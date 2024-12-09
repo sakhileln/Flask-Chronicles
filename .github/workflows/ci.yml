@@ -25,7 +25,7 @@ jobs:
           python -m pip install black
       - name: Check code formatting with black
         run: |
-          black --check --diff tests.py  # Check if code is properly formatted without modifying it
+          black --check --diff config.py flask_chronicles.py tests.py app/forms.py app/routes.py app/models.py app/__init__.py
 
   lint:
     runs-on: ubuntu-latest
@@ -41,9 +41,10 @@ jobs:
       - name: Install pylint
         run: |
           python -m pip install pylint
+          python -m pip install -r requirements.txt
       - name: Run Pylint
         run: |
-          pylint --disable=C0413 tests.py
+          pylint --disable=C0413,R0401 --ignore-paths=migrations,venv,__pycache__ .
 
   test:
     runs-on: ubuntu-latest

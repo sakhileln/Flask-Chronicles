@@ -15,6 +15,7 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
+# pylint: disable=too-few-public-methods
 class Config:
     """
     Configuration class for setting up application-level settings,
