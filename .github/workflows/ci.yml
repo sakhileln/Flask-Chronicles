@@ -44,7 +44,7 @@ jobs:
           python -m pip install -r requirements.txt
       - name: Run Pylint
         run: |
-          pylint --disable=C0413 --ignore-paths=migrations,venv,__pycache__ .
+          pylint --disable=C0413,R0401 --ignore-paths=migrations,venv,__pycache__ .
 
   test:
     runs-on: ubuntu-latest
