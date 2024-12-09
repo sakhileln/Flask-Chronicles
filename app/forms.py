@@ -75,17 +75,13 @@ class RegistrationForm(FlaskForm):
 
     def validate_username(self, username):
         """Ensure that the username is unique."""
-        user = db.session.scalar(
-            sa.select(User).where(User.username == username.data)
-        )
+        user = db.session.scalar(sa.select(User).where(User.username == username.data))
         if user is not None:
             raise ValidationError("Please use a different username.")
 
     def validate_email(self, email):
         """Ensure that the email is unique."""
-        user = db.session.scalar(
-            sa.select(User).where(User.email == email.data)
-        )
+        user = db.session.scalar(sa.select(User).where(User.email == email.data))
         if user is not None:
             raise ValidationError("Please use a different email address.")
 
