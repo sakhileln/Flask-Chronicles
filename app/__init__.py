@@ -30,9 +30,11 @@ login.login_view = "login"
 # Logging configuration to handle errors and send notifications
 if not app.debug:
     if app.config["MAIL_SERVER"]:
+        # pylint: disable=invalid-name
         auth = None
         if app.config["MAIL_USERNAME"] or app.config["MAIL_PASSWORD"]:
             auth = (app.config["MAIL_USERNAME"], app.config["MAIL_PASSWORD"])
+        # pylint: disable=invalid-name
         secure = None
         if app.config["MAIL_USE_TLS"]:
             secure = ()
@@ -65,4 +67,5 @@ if not app.debug:
     app.logger.info("Flask Chronicles startup")
 
 # Import application routes, models, and error handlers
+# pylint: disable=wrong-import-position
 from app import routes, models, errors
