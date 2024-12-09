@@ -45,7 +45,6 @@ def index():
     Route for the home page, showing recent posts.
     Only accessible by authenticated users.
     """
-    user = {"username": "Sakhile"}
     posts = [
         {
             "author": {"username": "Sakhile"},
@@ -69,6 +68,7 @@ def login():
         return redirect(url_for("index"))
     form = LoginForm()
     if form.validate_on_submit():
+        # pylint: disable=redefined-outer-name
         user = db.session.scalar(
             sa.select(User).where(User.username == form.username.data)
         )
@@ -102,6 +102,7 @@ def register():
         return redirect(url_for("index"))
     form = RegistrationForm()
     if form.validate_on_submit():
+        # pylint: disable=redefined-outer-name
         user = User(username=form.username.data, email=form.email.data)
         user.set_password(form.password.data)
         db.session.add(user)
@@ -118,6 +119,7 @@ def user(username):
     Route to view a user's profile. Shows the user's posts.
     Only accessible by authenticated users.
     """
+    # pylint: disable=redefined-outer-name
     user = db.first_or_404(sa.select(User).where(User.username == username))
     posts = [
         {"author": user, "body": "Test post #1"},
@@ -152,12 +154,10 @@ def edit_profile():
         db.session.commit()
         flash("Your changes have been saved.")
         return redirect(url_for("edit_profile"))
-    elif request.method == "GET":
+    if request.method == "GET":
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
-    return render_template(
-        "edit_profile.html", title="Edit Profile", form=form
-    )
+    return render_template("edit_profile.html", title="Edit Profile", form=form)
 
 
 @app.route("/follow/<username>", methods=["POST"])
@@ -168,9 +168,8 @@ def follow(username):
     """
     form = EmptyForm()
     if form.validate_on_submit():
-        user = db.session.scalar(
-            sa.select(User).where(User.username == username)
-        )
+        # pylint: disable=redefined-outer-name
+        user = db.session.scalar(sa.select(User).where(User.username == username))
         if user is None:
             flash(f"User {username} not found.")
             return redirect(url_for("index"))
@@ -181,8 +180,8 @@ def follow(username):
         db.session.commit()
         flash(f"You are following {username}!")
         return redirect(url_for("user", username=username))
-    else:
-        return redirect(url_for("index"))
+
+    return redirect(url_for("index"))
 
 
 @app.route("/unfollow/<username>", methods=["POST"])
@@ -193,9 +192,8 @@ def unfollow(username):
     """
     form = EmptyForm()
     if form.validate_on_submit():
-        user = db.session.scalar(
-            sa.select(User).where(User.username == username)
-        )
+        # pylint: disable=redefined-outer-name
+        user = db.session.scalar(sa.select(User).where(User.username == username))
         if user is None:
             flash(f"User {username} not found.")
             return redirect(url_for("index"))
@@ -206,5 +204,5 @@ def unfollow(username):
         db.session.commit()
         flash(f"You are not following {username}.")
         return redirect(url_for("user", username=username))
-    else:
-        return redirect(url_for("index"))
+
+    return redirect(url_for("index"))
