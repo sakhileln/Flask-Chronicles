@@ -132,6 +132,18 @@ class EmptyForm(FlaskForm):
 
 
 class PostForm(FlaskForm):
+    """
+    A form for creating or editing a post.
+
+    The form uses the following validators for the 'post' field:
+    - DataRequired: Ensures the field is not empty.
+    - Length: Restricts the length of the input to be between 1 and 140 characters.
+
+    Attributes:
+        post (TextAreaField): The text area for the post content.
+        submit (SubmitField): The submit button for the form.
+    """
+
     post = TextAreaField(
         "Say something", validators=[DataRequired(), Length(min=1, max=140)]
     )
