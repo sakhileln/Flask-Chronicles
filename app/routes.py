@@ -75,12 +75,8 @@ def index():
         per_page=app.config["POSTS_PER_PAGE"],
         error_out=False,
     )
-    next_url = (
-        url_for("index", page=posts.next_num) if posts.has_next else None
-    )
-    prev_url = (
-        url_for("index", page=posts.prev_num) if posts.has_prev else None
-    )
+    next_url = url_for("index", page=posts.next_num) if posts.has_next else None
+    prev_url = url_for("index", page=posts.prev_num) if posts.has_prev else None
     return render_template(
         "index.html",
         title="Home",
@@ -211,9 +207,7 @@ def edit_profile():
     if request.method == "GET":
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
-    return render_template(
-        "edit_profile.html", title="Edit Profile", form=form
-    )
+    return render_template("edit_profile.html", title="Edit Profile", form=form)
 
 
 @app.route("/follow/<username>", methods=["POST"])
@@ -225,9 +219,7 @@ def follow(username):
     form = EmptyForm()
     if form.validate_on_submit():
         # pylint: disable=redefined-outer-name
-        user = db.session.scalar(
-            sa.select(User).where(User.username == username)
-        )
+        user = db.session.scalar(sa.select(User).where(User.username == username))
         if user is None:
             flash(f"User {username} not found.")
             return redirect(url_for("index"))
@@ -251,9 +243,7 @@ def unfollow(username):
     form = EmptyForm()
     if form.validate_on_submit():
         # pylint: disable=redefined-outer-name
-        user = db.session.scalar(
-            sa.select(User).where(User.username == username)
-        )
+        user = db.session.scalar(sa.select(User).where(User.username == username))
         if user is None:
             flash(f"User {username} not found.")
             return redirect(url_for("index"))
@@ -291,12 +281,8 @@ def explore():
         per_page=app.config["POSTS_PER_PAGE"],
         error_out=False,
     )
-    next_url = (
-        url_for("explore", page=posts.next_num) if posts.has_next else None
-    )
-    prev_url = (
-        url_for("explore", page=posts.prev_num) if posts.has_prev else None
-    )
+    next_url = url_for("explore", page=posts.next_num) if posts.has_next else None
+    prev_url = url_for("explore", page=posts.prev_num) if posts.has_prev else None
     return render_template(
         "index.html",
         title="Explore",
@@ -308,13 +294,21 @@ def explore():
 
 @app.route("/reset_password_request", methods=["GET", "POST"])
 def reset_password_request():
+    """
+    This route is used to display the form for requesting a password reset. If the user
+    is already authenticated, they are redirected to the index page. If the form is submitted
+    with a valid email address, the system checks if a user exists with that email, and if found,
+    it sends a password reset email.
+
+    Returns:
+        - Redirect to the 'login' page if the form is successfully submitted.
+        - Renders the 'reset_password_request.html' template on GET or if the form is invalid.
+    """
     if current_user.is_authenticated:
         return redirect(url_for("index"))
     form = ResetPasswordRequestForm()
     if form.validate_on_submit():
-        user = db.session.scalar(
-            sa.select(User).where(User.email == form.email.data)
-        )
+        user = db.session.scalar(sa.select(User).where(User.email == form.email.data))
         if user:
             send_password_reset_email(user)
         flash("Check your email for the instructions to reset your password")
