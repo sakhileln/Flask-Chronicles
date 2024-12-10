@@ -39,7 +39,17 @@ from app import app, db
 from app.models import User, Post
 
 # pylint: disable=cyclic-import
-from app.forms import LoginForm, RegistrationForm, EditProfileForm, EmptyForm, PostForm
+from app.forms import (
+    LoginForm,
+    RegistrationForm,
+    EditProfileForm,
+    EmptyForm,
+    PostForm,
+    ResetPasswordRequestForm,
+)
+
+# pylint: disable=cyclic-import
+from app.email import send_password_reset_email
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -65,8 +75,12 @@ def index():
         per_page=app.config["POSTS_PER_PAGE"],
         error_out=False,
     )
-    next_url = url_for("index", page=posts.next_num) if posts.has_next else None
-    prev_url = url_for("index", page=posts.prev_num) if posts.has_prev else None
+    next_url = (
+        url_for("index", page=posts.next_num) if posts.has_next else None
+    )
+    prev_url = (
+        url_for("index", page=posts.prev_num) if posts.has_prev else None
+    )
     return render_template(
         "index.html",
         title="Home",
@@ -197,7 +211,9 @@ def edit_profile():
     if request.method == "GET":
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
-    return render_template("edit_profile.html", title="Edit Profile", form=form)
+    return render_template(
+        "edit_profile.html", title="Edit Profile", form=form
+    )
 
 
 @app.route("/follow/<username>", methods=["POST"])
@@ -209,7 +225,9 @@ def follow(username):
     form = EmptyForm()
     if form.validate_on_submit():
         # pylint: disable=redefined-outer-name
-        user = db.session.scalar(sa.select(User).where(User.username == username))
+        user = db.session.scalar(
+            sa.select(User).where(User.username == username)
+        )
         if user is None:
             flash(f"User {username} not found.")
             return redirect(url_for("index"))
@@ -233,7 +251,9 @@ def unfollow(username):
     form = EmptyForm()
     if form.validate_on_submit():
         # pylint: disable=redefined-outer-name
-        user = db.session.scalar(sa.select(User).where(User.username == username))
+        user = db.session.scalar(
+            sa.select(User).where(User.username == username)
+        )
         if user is None:
             flash(f"User {username} not found.")
             return redirect(url_for("index"))
@@ -271,12 +291,34 @@ def explore():
         per_page=app.config["POSTS_PER_PAGE"],
         error_out=False,
     )
-    next_url = url_for("explore", page=posts.next_num) if posts.has_next else None
-    prev_url = url_for("explore", page=posts.prev_num) if posts.has_prev else None
+    next_url = (
+        url_for("explore", page=posts.next_num) if posts.has_next else None
+    )
+    prev_url = (
+        url_for("explore", page=posts.prev_num) if posts.has_prev else None
+    )
     return render_template(
         "index.html",
         title="Explore",
         posts=posts.items,
         next_url=next_url,
         prev_url=prev_url,
+    )
+
+
+@app.route("/reset_password_request", methods=["GET", "POST"])
+def reset_password_request():
+    if current_user.is_authenticated:
+        return redirect(url_for("index"))
+    form = ResetPasswordRequestForm()
+    if form.validate_on_submit():
+        user = db.session.scalar(
+            sa.select(User).where(User.email == form.email.data)
+        )
+        if user:
+            send_password_reset_email(user)
+        flash("Check your email for the instructions to reset your password")
+        return redirect(url_for("login"))
+    return render_template(
+        "reset_password_request.html", title="Reset Password", form=form
     )
