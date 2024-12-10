@@ -14,6 +14,7 @@ Dependencies:
     - Flask-Mail: The Flask extension used to handle email sending.
     - app.mail: The Flask-Mail instance initialized in the Flask application.
 """
+
 from flask_mail import Message
 from app import mail
 
