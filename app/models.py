@@ -14,11 +14,13 @@ Classes:
 from datetime import datetime, timezone
 from hashlib import md5
 from typing import Optional
+from time import time
 from flask_login import UserMixin
 import sqlalchemy as sa
 import sqlalchemy.orm as so
 from werkzeug.security import generate_password_hash, check_password_hash
-from app import db, login
+import jwt
+from app import app, db, login
 
 
 # Association table for followers (many-to-many relationship)
@@ -195,6 +197,41 @@ class User(UserMixin, db.Model):
             .group_by(Post)
             .order_by(Post.timestamp.desc())
         )
+
+    def get_reset_password_token(self, expires_in=600):
+        """
+        Generates a reset password token for the user, which is valid for a specified time.
+
+        Args:
+            expires_in (int, optional): The expiration time in seconds for the token (default is 600 seconds, or 10 minutes).
+
+        Returns:
+            str: The encoded JWT token that can be used for resetting the user's password.
+        """
+        return jwt.encode(
+            {"reset_password": self.id, "exp": time() + expires_in},
+            app.config["SECRET_KEY"],
+            algorithm="HS256",
+        )
+
+    @staticmethod
+    def verify_reset_password_token(token):
+        """
+        Verifies the provided reset password token and retrieves the associated user.
+
+        Args:
+            token (str): The JWT token to verify, which should contain the user's ID for resetting the password.
+
+        Returns:
+            User or None: The User object if the token is valid, otherwise None.
+        """
+        try:
+            id = jwt.decode(token, app.config["SECRET_KEY"], algorithms=["HS256"])[
+                "reset_password"
+            ]
+        except:
+            return
+        return db.session.get(User, id)
 
 
 # pylint: disable=too-few-public-methods
