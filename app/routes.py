@@ -49,6 +49,7 @@ from app.forms import (
 )
 
 # pylint: disable=cyclic-import
+# pylint: disable=no-name-in-module
 from app.email import send_password_reset_email
 
 
@@ -308,6 +309,7 @@ def reset_password_request():
         return redirect(url_for("index"))
     form = ResetPasswordRequestForm()
     if form.validate_on_submit():
+        # pylint: disable=redefined-outer-name
         user = db.session.scalar(sa.select(User).where(User.email == form.email.data))
         if user:
             send_password_reset_email(user)
