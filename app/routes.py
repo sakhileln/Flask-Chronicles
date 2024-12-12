@@ -39,7 +39,18 @@ from app import app, db
 from app.models import User, Post
 
 # pylint: disable=cyclic-import
-from app.forms import LoginForm, RegistrationForm, EditProfileForm, EmptyForm, PostForm
+from app.forms import (
+    LoginForm,
+    RegistrationForm,
+    EditProfileForm,
+    EmptyForm,
+    PostForm,
+    ResetPasswordRequestForm,
+)
+
+# pylint: disable=cyclic-import
+# pylint: disable=no-name-in-module
+from app.email import send_password_reset_email
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -279,4 +290,31 @@ def explore():
         posts=posts.items,
         next_url=next_url,
         prev_url=prev_url,
+    )
+
+
+@app.route("/reset_password_request", methods=["GET", "POST"])
+def reset_password_request():
+    """
+    This route is used to display the form for requesting a password reset. If the user
+    is already authenticated, they are redirected to the index page. If the form is submitted
+    with a valid email address, the system checks if a user exists with that email, and if found,
+    it sends a password reset email.
+
+    Returns:
+        - Redirect to the 'login' page if the form is successfully submitted.
+        - Renders the 'reset_password_request.html' template on GET or if the form is invalid.
+    """
+    if current_user.is_authenticated:
+        return redirect(url_for("index"))
+    form = ResetPasswordRequestForm()
+    if form.validate_on_submit():
+        # pylint: disable=redefined-outer-name
+        user = db.session.scalar(sa.select(User).where(User.email == form.email.data))
+        if user:
+            send_password_reset_email(user)
+        flash("Check your email for the instructions to reset your password")
+        return redirect(url_for("login"))
+    return render_template(
+        "reset_password_request.html", title="Reset Password", form=form
     )

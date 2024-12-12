@@ -148,3 +148,24 @@ class PostForm(FlaskForm):
         "Say something", validators=[DataRequired(), Length(min=1, max=140)]
     )
     submit = SubmitField("Submit")
+
+
+class ResetPasswordRequestForm(FlaskForm):
+    """
+    A form for requesting a password reset.
+
+    This form is used to collect the user's email address when they want to request
+    a password reset. It includes validation for a properly formatted email address.
+
+    Attributes:
+        email (StringField): The email address field, which must be a valid email
+                              and cannot be empty.
+        submit (SubmitField): A submit button to request the password reset.
+
+    Methods:
+        validate(): Inherits from FlaskForm; validates the form data, ensuring that
+                    the email field contains a valid, non-empty email address.
+    """
+
+    email = StringField("Email", validators=[DataRequired(), Email()])
+    submit = SubmitField("Rquest Password Reset")
