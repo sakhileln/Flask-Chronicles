@@ -53,9 +53,11 @@ def send_password_reset_email(user):
     Sends a password reset email to the user with a reset token.
 
     Args:
-        user (User): The user who requested a password reset. The user's email will be used to send the reset instructions.
+        user (User): The user who requested a password reset. The user's
+        email will be used to send the reset instructions.
 
-    Sends an email containing a link to reset the user's password. The email includes both plain text and HTML versions.
+    Sends an email containing a link to reset the user's password. The
+    email includes both plain text and HTML versions.
     """
     token = user.get_reset_password_token()
     send_email(
