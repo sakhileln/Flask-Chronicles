@@ -203,7 +203,8 @@ class User(UserMixin, db.Model):
         Generates a reset password token for the user, which is valid for a specified time.
 
         Args:
-            expires_in (int, optional): The expiration time in seconds for the token (default is 600 seconds, or 10 minutes).
+            expires_in (int, optional): The expiration time in seconds for the token (default
+            is 600 seconds, or 10 minutes).
 
         Returns:
             str: The encoded JWT token that can be used for resetting the user's password.
@@ -215,21 +216,25 @@ class User(UserMixin, db.Model):
         )
 
     @staticmethod
+    # pylint: disable=inconsistent-return-statements
     def verify_reset_password_token(token):
         """
         Verifies the provided reset password token and retrieves the associated user.
 
         Args:
-            token (str): The JWT token to verify, which should contain the user's ID for resetting the password.
+            token (str): The JWT token to verify, which should contain the user's ID
+            for resetting the password.
 
         Returns:
             User or None: The User object if the token is valid, otherwise None.
         """
+        # pylint: disable=redefined-builtin
         try:
             id = jwt.decode(token, app.config["SECRET_KEY"], algorithms=["HS256"])[
                 "reset_password"
             ]
-        except:
+        except jwt.exceptions.InvalidTokenError as e:
+            print(f"Invalid token error: {e}")
             return
         return db.session.get(User, id)
 
