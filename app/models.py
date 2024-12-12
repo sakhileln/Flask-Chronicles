@@ -216,7 +216,7 @@ class User(UserMixin, db.Model):
         )
 
     @staticmethod
-    # pylint: disable=test-inconsistent-return-statements
+    # pylint: disable=inconsistent-return-statements
     def verify_reset_password_token(token):
         """
         Verifies the provided reset password token and retrieves the associated user.
