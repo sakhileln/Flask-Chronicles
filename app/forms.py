@@ -178,7 +178,8 @@ class ResetPasswordForm(FlaskForm):
 
     Attributes:
         password (PasswordField): A field for entering the new password, which is required.
-        password2 (PasswordField): A field for confirming the new password, which must match the 'password' field.
+        password2 (PasswordField): A field for confirming the new password, which must
+        match the 'password' field.
         submit (SubmitField): A submit button to submit the form.
     """
 
