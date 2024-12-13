@@ -15,6 +15,7 @@ Dependencies:
     - app.mail: The Flask-Mail instance initialized in the Flask application.
 """
 
+from threading import Thread
 from flask import render_template
 from flask_mail import Message
 from app import app, mail
@@ -67,3 +68,20 @@ def send_password_reset_email(user):
         text_body=render_template("email/reset_password.txt", user=user, token=token),
         html_body=render_template("email/reset_password.html", user=user, token=token),
     )
+
+
+def send_async_email(app, msg):
+    """
+    Sends an email asynchronously.
+
+    This function is used as the target for the thread that sends
+    the email in the background. It takes the Flask application
+    context and the email message to senf the email.
+
+    Args:
+        app (Flask): The Flask application instance.
+        msg (Message): The email message to send.
+    """
+    with app.app_context():
+        mail.send(msg)
+
