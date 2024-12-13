@@ -318,3 +318,34 @@ def reset_password_request():
     return render_template(
         "reset_password_request.html", title="Reset Password", form=form
     )
+
+
+@app.route("/reset_password/<token>", methods=["GET", "POST"])
+def reset_password(token):
+    """
+    This route handles the password reset process. It validates the token from the password reset link
+    and allows the user to reset their password.
+
+    If the user is already authenticated, they are redirected to the index page.
+    If the token is invalid or expired, the user is redirected to the index page.
+    If the token is valid, the user is presented with a form to reset their password.
+    Upon successful form submission, the password is updated, and the user is redirected to the login page.
+
+    Args:
+        token (str): A token used to verify the password reset request.
+
+    Returns:
+        A redirect to either the index or login page, or a rendered password reset form.
+    """
+    if current_user.is_authenticated:
+        return redirect(url_for("index"))
+    user = User.verify_reset_password_token(token)
+    if not user:
+        return redirect(url_for("index"))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        user.set_password(form.password.data)
+        db.session.commit()
+        flash("Your password has been reset.")
+        return redirect(url_for("login"))
+    return render_template("reset_password.html", form=form)
