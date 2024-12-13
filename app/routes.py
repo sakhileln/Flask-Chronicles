@@ -46,6 +46,7 @@ from app.forms import (
     EmptyForm,
     PostForm,
     ResetPasswordRequestForm,
+    ResetPasswordForm
 )
 
 # pylint: disable=cyclic-import
