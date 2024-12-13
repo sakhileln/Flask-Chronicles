@@ -21,34 +21,6 @@ from flask_mail import Message
 from app import app, mail
 
 
-def send_email(subject, sender, recipients, text_body, html_body):
-    """
-    Send an email using Flask-Mail.
-
-    This function sends an email with both plain text and HTML versions of the body.
-    The email is sent through the Flask-Mail extension configured in the `app` module.
-
-    Parameters:
-        subject (str): The subject of the email.
-        sender (str): The email address of the sender.
-        recipients (list): A list of recipient email addresses.
-        text_body (str): The plain-text version of the email body.
-        html_body (str): The HTML version of the email body.
-
-    Returns:
-        None: This function does not return any value. The email is sent asynchronously.
-    """
-    # Create a new email message object
-    msg = Message(subject, sender=sender, recipients=recipients)
-
-    # Set the plain-text and HTML bodies of the email
-    msg.body = text_body
-    msg.html = html_body
-
-    # Send the email using the Flask-Mail extension
-    mail.send(msg)
-
-
 def send_password_reset_email(user):
     """
     Sends a password reset email to the user with a reset token.
@@ -85,3 +57,27 @@ def send_async_email(app, msg):
     with app.app_context():
         mail.send(msg)
 
+def send_email(subject, sender, recipients, text_body, html_body):
+    """
+    Constructs an email messafe and sends it asynchronously.
+
+    This function creates a Message object with the provided subject,
+    sender, recipients, and body content (both plain text and HTML).
+    It then starts a new thread to send the email asynchronously.
+
+    Args:
+        subject (str): The subject of the email
+        sender (str): The sender's email address
+        recipients (list): A list of recipient email address.
+        text_body (str): The plain text body of the email.
+        html_body (str): The HTML body of the email.
+    """
+    # Create a new email message object
+    msg = Message(subject, sender=sender, recipients=recipients)
+
+    # Set the plain-text and HTML bodies of the email
+    msg.body = text_body
+    msg.html = html_body
+
+    # Send email asynchronously
+    Thread(target=send_async_email, args=(app, msg)).start()
