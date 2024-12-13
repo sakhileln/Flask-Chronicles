@@ -42,6 +42,7 @@ def send_password_reset_email(user):
     )
 
 
+# pylint: disable=redefined-outer-name
 def send_async_email(app, msg):
     """
     Sends an email asynchronously.
