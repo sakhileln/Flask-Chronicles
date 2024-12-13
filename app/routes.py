@@ -39,7 +39,19 @@ from app import app, db
 from app.models import User, Post
 
 # pylint: disable=cyclic-import
-from app.forms import LoginForm, RegistrationForm, EditProfileForm, EmptyForm, PostForm
+from app.forms import (
+    LoginForm,
+    RegistrationForm,
+    EditProfileForm,
+    EmptyForm,
+    PostForm,
+    ResetPasswordRequestForm,
+    ResetPasswordForm,
+)
+
+# pylint: disable=cyclic-import
+# pylint: disable=no-name-in-module
+from app.email import send_password_reset_email
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -280,3 +292,63 @@ def explore():
         next_url=next_url,
         prev_url=prev_url,
     )
+
+
+@app.route("/reset_password_request", methods=["GET", "POST"])
+def reset_password_request():
+    """
+    This route is used to display the form for requesting a password reset. If the user
+    is already authenticated, they are redirected to the index page. If the form is submitted
+    with a valid email address, the system checks if a user exists with that email, and if found,
+    it sends a password reset email.
+
+    Returns:
+        - Redirect to the 'login' page if the form is successfully submitted.
+        - Renders the 'reset_password_request.html' template on GET or if the form is invalid.
+    """
+    if current_user.is_authenticated:
+        return redirect(url_for("index"))
+    form = ResetPasswordRequestForm()
+    if form.validate_on_submit():
+        # pylint: disable=redefined-outer-name
+        user = db.session.scalar(sa.select(User).where(User.email == form.email.data))
+        if user:
+            send_password_reset_email(user)
+        flash("Check your email for the instructions to reset your password")
+        return redirect(url_for("login"))
+    return render_template(
+        "reset_password_request.html", title="Reset Password", form=form
+    )
+
+
+@app.route("/reset_password/<token>", methods=["GET", "POST"])
+def reset_password(token):
+    """
+    This route handles the password reset process. It validates the token from the
+    password reset link and allows the user to reset their password.
+
+    If the user is already authenticated, they are redirected to the index page.
+    If the token is invalid or expired, the user is redirected to the index page.
+    If the token is valid, the user is presented with a form to reset their password.
+    Upon successful form submission, the password is updated, and the user is
+    redirected to the login page.
+
+    Args:
+        token (str): A token used to verify the password reset request.
+
+    Returns:
+        A redirect to either the index or login page, or a rendered password reset form.
+    """
+    if current_user.is_authenticated:
+        return redirect(url_for("index"))
+    # pylint: disable=redefined-outer-name
+    user = User.verify_reset_password_token(token)
+    if not user:
+        return redirect(url_for("index"))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        user.set_password(form.password.data)
+        db.session.commit()
+        flash("Your password has been reset.")
+        return redirect(url_for("login"))
+    return render_template("reset_password.html", form=form)
