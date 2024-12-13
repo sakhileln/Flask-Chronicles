@@ -324,13 +324,14 @@ def reset_password_request():
 @app.route("/reset_password/<token>", methods=["GET", "POST"])
 def reset_password(token):
     """
-    This route handles the password reset process. It validates the token from the password reset link
-    and allows the user to reset their password.
+    This route handles the password reset process. It validates the token from the
+    password reset link and allows the user to reset their password.
 
     If the user is already authenticated, they are redirected to the index page.
     If the token is invalid or expired, the user is redirected to the index page.
     If the token is valid, the user is presented with a form to reset their password.
-    Upon successful form submission, the password is updated, and the user is redirected to the login page.
+    Upon successful form submission, the password is updated, and the user is
+    redirected to the login page.
 
     Args:
         token (str): A token used to verify the password reset request.
@@ -340,6 +341,7 @@ def reset_password(token):
     """
     if current_user.is_authenticated:
         return redirect(url_for("index"))
+    # pylint: disable=redefined-outer-name
     user = User.verify_reset_password_token(token)
     if not user:
         return redirect(url_for("index"))
