@@ -1,115 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            footer {
+                background-color: rgb(41, 48, 48);
+                /* Same as bg-body-tertiary */
+                color: white;
+                padding: 20px 0;
+            }
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        footer {
-            background-color: rgb(41, 48, 48);
-            /* Same as bg-body-tertiary */
-            color: white;
-            padding: 20px 0;
-        }
+            .footer-icons i {
+                color: white;
+                margin-right: 15px;
+                font-size: 1.5rem;
+                transition: color 0.3s;
+            }
 
-        .footer-icons i {
-            color: white;
-            margin-right: 15px;
-            font-size: 1.5rem;
-            transition: color 0.3s;
-        }
+            .footer-icons i:hover {
+                color: #17a2b8;
+            }
 
-        .footer-icons i:hover {
-            color: #17a2b8;
-        }
-
-        .footer-text {
-            font-size: 0.9rem;
-        }
-    </style>
-    {% if title %}
-    <title>{{ title }} - Flask Chronicles</title>
-    {% else %}
-    <title>Flask Chronicles</title>
-    {% endif %}
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <!-- Bootstrap Icons CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-</head>
-
-<body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url_for('index') }}">Flask Chronicles</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{ url_for('index') }}">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{ url_for('explore') }}">Explore</a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav mb-2 mb-lg-0">
-                    {% if current_user.is_anonymous %}
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{ url_for('login') }}">Login</a>
-                    </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page"
-                            href="{{ url_for('user', username=current_user.username) }}">Profile</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{ url_for('logout') }}">Logout</a>
-                    </li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
-    </nav>
-    <div class="container mt-3">
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-info" role="alert">{{ message }}</div>
-        {% endfor %}
+            .footer-text {
+                font-size: 0.9rem;
+            }
+        </style>
+        {% if title %}
+        <title>{{ title }} - Flask Chronicles</title>
+        {% else %}
+        <title>Flask Chronicles</title>
         {% endif %}
-        {% endwith %}
-        {% block content %}{% endblock %}
-    </div>
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <!-- Bootstrap Icons CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    </head>
 
-    <footer>
-        <div class="container text-center">
-            <div class="row">
-                <div class="col-12 col-md-6 mb-3 mb-md-0">
-                    <p class="footer-text">Copyright: Space Aliens &copy;</p>
-                    <p class="footer-text">Author: Sakhile and the Aliens! 👽</p>
-                </div>
-                <div class="col-12 col-md-6">
-                    <div class="footer-icons">
-                        <a href="mailto:sakhile@mars.io"><i class="bi bi-envelope"></i></a>
-                        <a href="https://twitter.com/sakhilelindah"><i class="bi bi-twitter"></i></a>
-                        <a href="https://github.com/sakhileln"><i class="bi bi-github"></i></a>
-                        <a href="https://www.linkedin.com/sakhile-ndlazi"><i class="bi bi-linkedin"></i></a>
-                    </div>
-                    <!-- <p class="footer-text"><a href="mailto:sakhile@mars.io" class="text-light">sakhile@mars.io</a></p> -->
+    <body>
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container">
+                <a class="navbar-brand" href="{{ url_for('index') }}">Flask Chronicles</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="{{ url_for('index') }}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="{{ url_for('explore') }}">Explore</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav mb-2 mb-lg-0">
+                        {% if current_user.is_anonymous %}
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="{{ url_for('login') }}">Login</a>
+                        </li>
+                        {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page"
+                                href="{{ url_for('user', username=current_user.username) }}">Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="{{ url_for('logout') }}">Logout</a>
+                        </li>
+                        {% endif %}
+                    </ul>
                 </div>
             </div>
+        </nav>
+        <div class="container mt-3">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-info" role="alert">{{ message }}</div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            {% block content %}{% endblock %}
         </div>
-    </footer>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
-        </script>
-</body>
+        <footer>
+            <div class="container text-center">
+                <div class="row">
+                    <div class="col-12 col-md-6 mb-3 mb-md-0">
+                        <p class="footer-text">Copyright: Space Aliens &copy;</p>
+                        <p class="footer-text">Author: Sakhile and the Aliens! 👽</p>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="footer-icons">
+                            <a href="mailto:sakhile@mars.io"><i class="bi bi-envelope"></i></a>
+                            <a href="https://twitter.com/sakhilelindah"><i class="bi bi-twitter"></i></a>
+                            <a href="https://github.com/sakhileln"><i class="bi bi-github"></i></a>
+                            <a href="https://www.linkedin.com/sakhile-ndlazi"><i class="bi bi-linkedin"></i></a>
+                        </div>
+                        <!-- <p class="footer-text"><a href="mailto:sakhile@mars.io" class="text-light">sakhile@mars.io</a></p> -->
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
+            </script>
+        {{ moment.include_moment() }}
+    </body>
 
 </html>
