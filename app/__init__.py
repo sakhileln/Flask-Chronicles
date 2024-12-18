@@ -18,6 +18,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_mail import Mail
+from flask_moment import Moment
 from config import Config
 
 # Initialize the Flask application and other extensions
@@ -28,6 +29,7 @@ migrate = Migrate(app, db)
 login = LoginManager(app)
 login.login_view = "login"
 mail = Mail(app)
+moment = Moment(app)
 
 # Logging configuration to handle errors and send notifications
 if not app.debug:
