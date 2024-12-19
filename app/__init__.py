@@ -22,13 +22,14 @@ from flask_moment import Moment
 from flask_babel import Babel, lazy_gettext as _l
 from config import Config
 
+
 def get_locale():
     """
-    Determine the best matching locale for the application based on the 
+    Determine the best matching locale for the application based on the
     client's accepted languages.
 
-    This function checks the 'Accept-Language' header sent by the client 
-    and returns the most suitable language from the application's 
+    This function checks the 'Accept-Language' header sent by the client
+    and returns the most suitable language from the application's
     configured languages.
 
     Returns:
@@ -36,14 +37,15 @@ def get_locale():
     """
     return request.accept_languages.best_match(app.config["LANGUAGES"])
 
+
 # Initialize the Flask application and other extensions
 app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login = LoginManager(app)
-login.login_view = 'login'
-login.login_message = _l('Please log in to access this page.')
+login.login_view = "login"
+login.login_message = _l("Please log in to access this page.")
 mail = Mail(app)
 moment = Moment(app)
 babel = Babel(app, locale_selector=get_locale)
