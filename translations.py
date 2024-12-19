@@ -15,8 +15,8 @@ Dependencies:
 entries in the .pot file.
 """
 
-from deep_translator import GoogleTranslator
 import re
+from deep_translator import GoogleTranslator
 
 with open("messages.pot", "r", encoding="utf-8") as file:
     pot_content = file.read()
