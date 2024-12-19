@@ -59,7 +59,7 @@ msgstr ""
     # Add translated msgid and msgstr pairs
     for msgid in msgids:
         msgstr = translations.get(msgid, "")
-        po_file.write(f"\n#: Generated\n")
+        po_file.write("\n#: Generated\n")
         po_file.write(f'msgid "{msgid}"\n')
         po_file.write(f'msgstr "{msgstr}"\n')
 
