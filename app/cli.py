@@ -50,6 +50,7 @@ def update():
     os.remove("messages.pot")
 
 
+# pylint: disable=redefined-builtin
 @translate.command()
 def compile():
     """Compile all languages."""
