@@ -44,3 +44,4 @@ class Config:
     # List of administrator email addresses, typically used for sending error alerts
     ADMINS = ["sakhilelindah@gmail.com"]
     POSTS_PER_PAGE = 3
+    LANGUAGES = ["en", "es"]
