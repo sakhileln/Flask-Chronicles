@@ -10,16 +10,34 @@ This module sets up the core components of a Flask application, including:
 - Logging setup for error tracking with email notifications and file logging
 """
 
+# pylint: disable=cyclic-import
 import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
 import os
-from flask import Flask
+from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_mail import Mail
 from flask_moment import Moment
+from flask_babel import Babel, lazy_gettext as _l
 from config import Config
+
+
+def get_locale():
+    """
+    Determine the best matching locale for the application based on the
+    client's accepted languages.
+
+    This function checks the 'Accept-Language' header sent by the client
+    and returns the most suitable language from the application's
+    configured languages.
+
+    Returns:
+        str: The best matching locale as a string, or None if no match is found.
+    """
+    return request.accept_languages.best_match(app.config["LANGUAGES"])
+
 
 # Initialize the Flask application and other extensions
 app = Flask(__name__)
@@ -28,8 +46,10 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login = LoginManager(app)
 login.login_view = "login"
+login.login_message = _l("Please log in to access this page.")
 mail = Mail(app)
 moment = Moment(app)
+babel = Babel(app, locale_selector=get_locale)
 
 # Logging configuration to handle errors and send notifications
 if not app.debug:
