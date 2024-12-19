@@ -1,5 +1,6 @@
 """
-This script translates messages from a .pot file to Spanish using the GoogleTranslator from the deep_translator library.
+This script translates messages from a .pot file to Spanish using the
+GoogleTranslator from the deep_translator library.
 
 Steps:
 1. Read the content of a .pot file which contains msgid entries.
@@ -8,8 +9,10 @@ Steps:
 4. Write the translations into a new .po file with the appropriate formatting.
 
 Dependencies:
-- deep_translator: A Python library that provides a simple interface to various translation services, including Google Translate.
-- re: The built-in Python module for regular expressions, used to find msgid entries in the .pot file.
+- deep_translator: A Python library that provides a simple interface to various
+ translation services, including Google Translate.
+- re: The built-in Python module for regular expressions, used to find msgid
+entries in the .pot file.
 """
 
 from deep_translator import GoogleTranslator
