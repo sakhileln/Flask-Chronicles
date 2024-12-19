@@ -28,7 +28,7 @@ from urllib.parse import urlsplit
 
 # Third-party imports
 import sqlalchemy as sa
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, g
 from flask_login import current_user, login_user, logout_user, login_required
 from flask_babel import _, get_locale
 
