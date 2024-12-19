@@ -9,7 +9,7 @@ This module sets up the core components of a Flask application, including:
 - Flask-Migrate for database migrations
 - Logging setup for error tracking with email notifications and file logging
 """
-
+# pylint: disable=cyclic-import
 import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
 import os
