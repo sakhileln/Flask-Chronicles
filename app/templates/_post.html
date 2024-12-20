@@ -11,7 +11,7 @@
             </a>
             said {{ moment(post.timestamp).fromNow() }}:
             <br>
-            {{ post.body }}
+            <span id="post{{ post.id }}">{{ post.body }}</span>
         </td>
         <td>
             {% if post.language and post.language != g.locale %}
