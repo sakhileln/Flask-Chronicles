@@ -31,10 +31,12 @@ import sqlalchemy as sa
 from flask import render_template, flash, redirect, url_for, request, g
 from flask_login import current_user, login_user, logout_user, login_required
 from flask_babel import _, get_locale
+from langdetect import detect, LangDetectException
 
 # Local application imports
 # pylint: disable=cyclic-import
 from app import app, db
+from app.ggl_translate import translate
 
 # pylint: disable=cyclic-import
 from app.models import User, Post
@@ -65,6 +67,11 @@ def index():
     """
     form = PostForm()
     if form.validate_on_submit():
+        # pylint: disable=unused-variable
+        try:
+            language = detect(form.post.data)
+        except LangDetectException:
+            language = ""
         post = Post(body=form.post.data, author=current_user)
         db.session.add(post)
         db.session.commit()
@@ -354,3 +361,33 @@ def reset_password(token):
         flash(_("Your password has been reset."))
         return redirect(url_for("login"))
     return render_template("reset_password.html", form=form)
+
+
+@app.route("/translate", methods=["POST"])
+@login_required
+def translate_text():
+    """
+    Handle translation requests.
+
+    This route accepts a POST request containing JSON data with the text to be translated,
+    the source language, and the destination language. It requires the user to be logged in.
+    The function uses the `translate` function to perform the translation and returns
+    the translated text in JSON format.
+
+    Example:
+    POST /translate
+    {
+        "text": "Hello, world!",
+        "source_language": "en",
+        "dest_language": "es"
+    }
+
+    Response:
+    {
+        "text": "¡Hola, mundo!"
+    }
+    """
+    data = request.get_json()
+    return {
+        "text": translate(data["text"], data["source_language"], data["dest_language"])
+    }
