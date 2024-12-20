@@ -31,6 +31,7 @@ from app import db
 from app.models import User
 
 
+# pylint: disable=too-few-public-methods
 class LoginForm(FlaskForm):
     """
     Form used for user login, including fields for username, password,
@@ -86,7 +87,7 @@ class RegistrationForm(FlaskForm):
         if user is not None:
             raise ValidationError(_("Please use a different email address."))
 
-
+# pylint: disable=too-few-public-methods
 class EditProfileForm(FlaskForm):
     """
     Form used for editing a user's profile, with fields for changing the username
@@ -119,7 +120,7 @@ class EditProfileForm(FlaskForm):
             if user is not None:
                 raise ValidationError(_("Please use a different username."))
 
-
+# pylint: disable=too-few-public-methods
 class EmptyForm(FlaskForm):
     """
     A form used for actions that do not require additional input from the user,
@@ -131,7 +132,7 @@ class EmptyForm(FlaskForm):
 
     submit = SubmitField("Submit")
 
-
+# pylint: disable=too-few-public-methods
 class PostForm(FlaskForm):
     """
     A form for creating or editing a post.
@@ -150,7 +151,7 @@ class PostForm(FlaskForm):
     )
     submit = SubmitField(_l("Submit"))
 
-
+# pylint: disable=too-few-public-methods
 class ResetPasswordRequestForm(FlaskForm):
     """
     A form for requesting a password reset.
@@ -171,7 +172,7 @@ class ResetPasswordRequestForm(FlaskForm):
     email = StringField(_l("Email"), validators=[DataRequired(), Email()])
     submit = SubmitField(_l("Request Password Reset"))
 
-
+# pylint: disable=too-few-public-methods
 class ResetPasswordForm(FlaskForm):
     """
     A form for resetting the user's password. It includes fields for the new password
