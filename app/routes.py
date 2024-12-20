@@ -31,6 +31,7 @@ import sqlalchemy as sa
 from flask import render_template, flash, redirect, url_for, request, g
 from flask_login import current_user, login_user, logout_user, login_required
 from flask_babel import _, get_locale
+from langdetect import detect, LangDetectException
 
 # Local application imports
 # pylint: disable=cyclic-import
@@ -65,6 +66,10 @@ def index():
     """
     form = PostForm()
     if form.validate_on_submit():
+        try:
+            language = detect(form.post.data)
+        except LangDetectException:
+            language = ''
         post = Post(body=form.post.data, author=current_user)
         db.session.add(post)
         db.session.commit()
