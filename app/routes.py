@@ -67,6 +67,7 @@ def index():
     """
     form = PostForm()
     if form.validate_on_submit():
+        # pylint: disable=unused-variable
         try:
             language = detect(form.post.data)
         except LangDetectException:
