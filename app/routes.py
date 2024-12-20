@@ -70,7 +70,7 @@ def index():
         try:
             language = detect(form.post.data)
         except LangDetectException:
-            language = ''
+            language = ""
         post = Post(body=form.post.data, author=current_user)
         db.session.add(post)
         db.session.commit()
@@ -368,9 +368,9 @@ def translate_text():
     """
     Handle translation requests.
 
-    This route accepts a POST request containing JSON data with the text to be translated, 
-    the source language, and the destination language. It requires the user to be logged in. 
-    The function uses the `translate` function to perform the translation and returns 
+    This route accepts a POST request containing JSON data with the text to be translated,
+    the source language, and the destination language. It requires the user to be logged in.
+    The function uses the `translate` function to perform the translation and returns
     the translated text in JSON format.
 
     Example:
@@ -380,15 +380,13 @@ def translate_text():
         "source_language": "en",
         "dest_language": "es"
     }
-    
+
     Response:
     {
         "text": "¡Hola, mundo!"
     }
     """
     data = request.get_json()
-    return {"text": translate(
-        data["text"],
-        data["source_language"],
-        data["dest_language"]
-    )}
+    return {
+        "text": translate(data["text"], data["source_language"], data["dest_language"])
+    }
