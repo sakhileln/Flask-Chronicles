@@ -87,6 +87,7 @@ class RegistrationForm(FlaskForm):
         if user is not None:
             raise ValidationError(_("Please use a different email address."))
 
+
 # pylint: disable=too-few-public-methods
 class EditProfileForm(FlaskForm):
     """
@@ -120,6 +121,7 @@ class EditProfileForm(FlaskForm):
             if user is not None:
                 raise ValidationError(_("Please use a different username."))
 
+
 # pylint: disable=too-few-public-methods
 class EmptyForm(FlaskForm):
     """
@@ -131,6 +133,7 @@ class EmptyForm(FlaskForm):
     """
 
     submit = SubmitField("Submit")
+
 
 # pylint: disable=too-few-public-methods
 class PostForm(FlaskForm):
@@ -150,6 +153,7 @@ class PostForm(FlaskForm):
         _l("Say something"), validators=[DataRequired(), Length(min=1, max=140)]
     )
     submit = SubmitField(_l("Submit"))
+
 
 # pylint: disable=too-few-public-methods
 class ResetPasswordRequestForm(FlaskForm):
@@ -171,6 +175,7 @@ class ResetPasswordRequestForm(FlaskForm):
 
     email = StringField(_l("Email"), validators=[DataRequired(), Email()])
     submit = SubmitField(_l("Request Password Reset"))
+
 
 # pylint: disable=too-few-public-methods
 class ResetPasswordForm(FlaskForm):
