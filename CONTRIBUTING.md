@@ -174,5 +174,21 @@ By making a contribution to this project, I certify that:
 > 1. I understand and agree that this project and the contribution are public and that a record of the contribution (including all personal information I submit with it, including my sign-off) is maintained indefinitely and may be redistributed consistent with this project or the open source license(s) involved.
 
 
+## :wink: Contribute
+1. Fork the repository
+2. Create your feature branch:
+    ```bash
+    git checkout -b feature/YourFeature
+    ```
+3. Commit your changes:
+    ```bash
+    git commit -m "Add feature"
+    ```
+4. Push to the branch:
+    ```bash
+    git push origin feature/YourFeature
+    ```
+5. Open a pull request.
+
 ## :pray: Credits
 Inspired by [@jessesquires](https://github.com/jessesquires). 
