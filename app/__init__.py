@@ -120,6 +120,6 @@ def create_app(config_class=Config):
     return app
 
 
-# Import application routes, models, and error handlers
+# Import application models
 # pylint: disable=wrong-import-position
 from app import models
