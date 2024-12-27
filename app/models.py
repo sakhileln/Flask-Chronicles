@@ -211,9 +211,9 @@ class User(UserMixin, db.Model):
             str: The encoded JWT token that can be used for resetting the user's password.
         """
         return jwt.encode(
-            {'reset_password': self.id, 'exp': time() + expires_in},
-            current_app.config['SECRET_KEY'],
-            algorithm='HS256',
+            {"reset_password": self.id, "exp": time() + expires_in},
+            current_app.config["SECRET_KEY"],
+            algorithm="HS256",
         )
 
     @staticmethod
@@ -231,9 +231,9 @@ class User(UserMixin, db.Model):
         """
         # pylint: disable=redefined-builtin
         try:
-            id = jwt.decode(token, current_app.config["SECRET_KEY"], algorithms=["HS256"])[
-                "reset_password"
-            ]
+            id = jwt.decode(
+                token, current_app.config["SECRET_KEY"], algorithms=["HS256"]
+            )["reset_password"]
         except jwt.exceptions.InvalidTokenError as e:
             print(f"Invalid token error: {e}")
             return
