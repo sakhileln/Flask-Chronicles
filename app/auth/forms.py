@@ -10,6 +10,7 @@ Classes:
 - EmptyForm: A form used for following and unfollowing actions.
 """
 
+import sqlalchemy as sa
 from flask_wtf import FlaskForm
 from flask_babel import _, lazy_gettext as _l
 import sqlalchemy as sa
@@ -18,14 +19,12 @@ from wtforms import (
     PasswordField,
     BooleanField,
     SubmitField,
-    TextAreaField,
 )
 from wtforms.validators import (
     ValidationError,
     DataRequired,
     Email,
     EqualTo,
-    Length,
 )
 from app import db
 from app.models import User
@@ -76,13 +75,11 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField(_l("Register"))
 
     def validate_username(self, username):
-        """Ensure that the username is unique."""
         user = db.session.scalar(sa.select(User).where(User.username == username.data))
         if user is not None:
             raise ValidationError(_("Please use a different username."))
 
     def validate_email(self, email):
-        """Ensure that the email is unique."""
         user = db.session.scalar(sa.select(User).where(User.email == email.data))
         if user is not None:
             raise ValidationError(_("Please use a different email address."))
