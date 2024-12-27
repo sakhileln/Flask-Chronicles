@@ -51,6 +51,7 @@ mail = Mail(app)
 moment = Moment(app)
 babel = Babel(app, locale_selector=get_locale)
 
+
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
@@ -63,15 +64,19 @@ def create_app(config_class=Config):
     babel.init_app(app, locale_selector=get_locale)
 
     from app.errors import bp as errors_bp
+
     app.register_blueprint(errors_bp)
 
     from app.auth import bp as auth_bp
-    app.register_blueprint(auth_bp, url_prefix='/auth')
+
+    app.register_blueprint(auth_bp, url_prefix="/auth")
 
     from app.main import bp as main_bp
+
     app.register_blueprint(main_bp)
 
     from app.cli import bp as cli_bp
+
     app.register_blueprint(cli_bp)
     # Logging configuration to handle errors and send notifications
     if not app.debug:
@@ -113,6 +118,7 @@ def create_app(config_class=Config):
         app.logger.info("Flask Chronicles startup")
 
     return app
+
 
 # Import application routes, models, and error handlers
 # pylint: disable=wrong-import-position
