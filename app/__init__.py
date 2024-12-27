@@ -76,22 +76,25 @@ def create_app(config_class=Config):
     from app.cli import bp as cli_bp
 
     app.register_blueprint(cli_bp)
+    
     # Logging configuration to handle errors and send notifications
-    if not app.debug:
-        if app.config["MAIL_SERVER"]:
+    if not app.debug and not app.testing:
+        if app.config['MAIL_SERVER']:
             # pylint: disable=invalid-name
             auth = None
-            if app.config["MAIL_USERNAME"] or app.config["MAIL_PASSWORD"]:
-                auth = (app.config["MAIL_USERNAME"], app.config["MAIL_PASSWORD"])
+            if app.config['MAIL_USERNAME'] or app.config['MAIL_PASSWORD']:
+                auth = (app.config['MAIL_USERNAME'],
+                        app.config['MAIL_PASSWORD'])
             # pylint: disable=invalid-name
             secure = None
-            if app.config["MAIL_USE_TLS"]:
+            if app.config['MAIL_USE_TLS']:
                 secure = ()
             mail_handler = SMTPHandler(
-                mailhost=(app.config["MAIL_SERVER"], app.config["MAIL_PORT"]),
-                fromaddr="no-reply@" + app.config["MAIL_SERVER"],
-                toaddrs=app.config["ADMINS"],
-                subject="⛔ Flask Chronicles Failure❗",
+                mailhost=(app.config['MAIL_SERVER'],
+                app.config['MAIL_PORT']),
+                fromaddr='no-reply@' + app.config['MAIL_SERVER'],
+                toaddrs=app.config['ADMINS'],
+                subject='⛔ Flask Chronicles Failure❗',
                 credentials=auth,
                 secure=secure,
             )
@@ -99,21 +102,22 @@ def create_app(config_class=Config):
             app.logger.addHandler(mail_handler)
 
         # File handler for logging application events to a file
-        if not os.path.exists("logs"):
-            os.mkdir("logs")
+        if not os.path.exists('logs'):
+            os.mkdir('logs')
         file_handler = RotatingFileHandler(
-            "logs/flask_chronicles.log", maxBytes=10240, backupCount=10
+            'logs/flask_chronicles.log', maxBytes=10240, backupCount=10
         )
         file_handler.setFormatter(
             logging.Formatter(
-                "%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]"
+                '%(asctime)s %(levelname)s: %(message)s '
+                '[in %(pathname)s:%(lineno)d]'
             )
         )
         file_handler.setLevel(logging.INFO)
         app.logger.addHandler(file_handler)
 
         app.logger.setLevel(logging.INFO)
-        app.logger.info("Flask Chronicles startup")
+        app.logger.info('Flask Chronicles startup')
 
     return app
 
