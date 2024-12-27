@@ -51,6 +51,18 @@ from app.main.forms import (
 from app.main import bp
 
 
+@bp.before_request
+def before_request():
+    """
+    A function that runs before every request. Updates the current user's
+    'last_seen' timestamp if the user is authenticated.
+    """
+    if current_user.is_authenticated:
+        current_user.last_seen = datetime.now(timezone.utc)
+        db.session.commit()
+    g.locale = str(get_locale())
+
+
 @bp.route("/", methods=["GET", "POST"])
 @bp.route("/index", methods=["GET", "POST"])
 @login_required
@@ -124,16 +136,7 @@ def user(username):
     )
 
 
-@bp.before_request
-def before_request():
-    """
-    A function that runs before every request. Updates the current user's
-    'last_seen' timestamp if the user is authenticated.
-    """
-    if current_user.is_authenticated:
-        current_user.last_seen = datetime.now(timezone.utc)
-        db.session.commit()
-    g.locale = str(get_locale())
+
 
 
 @bp.route("/edit_profile", methods=["GET", "POST"])
