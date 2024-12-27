@@ -9,14 +9,16 @@ This suite tests the following functionalities:
 - Fetching posts of followed users
 """
 
-import os
-
-os.environ["DATABASE_URL"] = "sqlite://"
 # pylint: disable=wrong-import-position
 from datetime import datetime, timezone, timedelta
 import unittest
-from app import app, db
+from app import create_app, db
 from app.models import User, Post
+from config import Config
+
+class TestConfig(Config):
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite://'
 
 
 class UserModelCase(unittest.TestCase):
@@ -39,7 +41,8 @@ class UserModelCase(unittest.TestCase):
         Set up the application context and create all tables in the database.
         This method is called before every test method in the class.
         """
-        self.app_context = app.app_context()
+        self.app = create_app(TestConfig)
+        self.app_context = self.app.app_context()
         self.app_context.push()
         db.create_all()
 
