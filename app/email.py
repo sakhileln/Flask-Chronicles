@@ -61,6 +61,7 @@ def send_email(subject, sender, recipients, text_body, html_body):
     msg.html = html_body
 
     # Send email asynchronously
+    # pylint: disable=protected-access
     Thread(
         target=send_async_email, args=(current_app._get_current_object(), msg)
     ).start()
