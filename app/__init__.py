@@ -51,6 +51,23 @@ babel = Babel()
 
 
 def create_app(config_class=Config):
+    """
+    Create and configure the Flask application.
+
+    This function initializes the Flask application with the specified 
+    configuration class. It sets up extensions such as SQLAlchemy, 
+    Flask-Migrate, Flask-Login, Flask-Mail, Flask-Moment, and Flask-Babel. 
+    Additionally, it registers application blueprints for error handling, 
+    authentication, main functionality, and command-line interface.
+
+    Args:
+        config_class (Config): The configuration class to use for the app. 
+                            Defaults to the base Config class.
+        
+    Returns:
+        Flask: The configured Flask application instance.
+    """
+
     app = Flask(__name__)
     app.config.from_object(config_class)
 
