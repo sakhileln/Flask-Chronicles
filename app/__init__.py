@@ -107,8 +107,7 @@ def create_app(config_class=Config):
             if app.config["MAIL_USE_TLS"]:
                 secure = ()
             mail_handler = SMTPHandler(
-                mailhost=(app.config["MAIL_SERVER"],
-                app.config["MAIL_PORT"]),
+                mailhost=(app.config["MAIL_SERVER"], app.config["MAIL_PORT"]),
                 fromaddr="no-reply@" + app.config["MAIL_SERVER"],
                 toaddrs=app.config["ADMINS"],
                 subject="⛔ Flask Chronicles Failure❗",
@@ -126,7 +125,8 @@ def create_app(config_class=Config):
         )
         file_handler.setFormatter(
             logging.Formatter(
-                "%(asctime)s %(levelname)s: %(message)s " + "[in %(pathname)s:%(lineno)d]"
+                "%(asctime)s %(levelname)s: %(message)s "
+                + "[in %(pathname)s:%(lineno)d]"
             )
         )
         file_handler.setLevel(logging.INFO)
