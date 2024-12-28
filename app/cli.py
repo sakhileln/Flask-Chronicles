@@ -51,7 +51,7 @@ def update():
         raise RuntimeError("update command failed")
     os.remove("messages.pot")
 
-
+# pylint: disable=redefined-builtin
 @translate.command()
 def compile():
     """Compile all languages."""
