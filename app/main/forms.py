@@ -43,10 +43,9 @@ class EditProfileForm(FlaskForm):
     - validate_username: Ensures the new username is unique, if it has changed.
     """
 
-    username = StringField(_l('Username'), validators=[DataRequired()])
-    about_me = TextAreaField(_l('About me'),
-                             validators=[Length(min=0, max=140)])
-    submit = SubmitField(_l('Submit'))
+    username = StringField(_l("Username"), validators=[DataRequired()])
+    about_me = TextAreaField(_l("About me"), validators=[Length(min=0, max=140)])
+    submit = SubmitField(_l("Submit"))
 
     def __init__(self, original_username, *args, **kwargs):
         """Initialize the form with the original username for comparison."""
@@ -56,10 +55,11 @@ class EditProfileForm(FlaskForm):
     def validate_username(self, username):
         """Ensure that the username is unique (if changed)."""
         if username.data != self.original_username:
-            user = db.session.scalar(sa.select(User).where(
-                User.username == username.data))
+            user = db.session.scalar(
+                sa.select(User).where(User.username == username.data)
+            )
             if user is not None:
-                raise ValidationError(_('Please use a different username.'))
+                raise ValidationError(_("Please use a different username."))
 
 
 # pylint: disable=too-few-public-methods
@@ -93,4 +93,3 @@ class PostForm(FlaskForm):
         _l("Say something"), validators=[DataRequired(), Length(min=1, max=140)]
     )
     submit = SubmitField(_l("Submit"))
-
