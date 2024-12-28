@@ -78,18 +78,19 @@ def create_app(config_class=Config):
     moment.init_app(app)
     babel.init_app(app, locale_selector=get_locale)
 
+    # pylint: disable=import-outside-toplevel
     from app.errors import bp as errors_bp
 
     app.register_blueprint(errors_bp)
-
+    # pylint: disable=import-outside-toplevel
     from app.auth import bp as auth_bp
 
     app.register_blueprint(auth_bp, url_prefix="/auth")
-
+    # pylint: disable=import-outside-toplevel
     from app.main import bp as main_bp
 
     app.register_blueprint(main_bp)
-
+    # pylint: disable=import-outside-toplevel
     from app.cli import bp as cli_bp
 
     app.register_blueprint(cli_bp)
