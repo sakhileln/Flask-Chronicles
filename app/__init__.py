@@ -14,7 +14,7 @@ This module sets up the core components of a Flask application, including:
 import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
 import os
-from flask import Flask, request
+from flask import Flask, request, current_app
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
@@ -36,7 +36,7 @@ def get_locale():
     Returns:
         str: The best matching locale as a string, or None if no match is found.
     """
-    return request.accept_languages.best_match(app.config["LANGUAGES"])
+    return request.accept_languages.best_match(current_app.config["LANGUAGES"])
 
 
 # Initialize the Flask application and other extensions
