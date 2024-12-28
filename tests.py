@@ -19,6 +19,13 @@ from config import Config
 
 # pylint: disable=too-few-public-methods
 class TestConfig(Config):
+    """
+    Test configuration class for the application.
+
+    This class inherits from the base Config class and is used to set up 
+    the testing environment. It enables testing mode and configures 
+    SQLite as the database URI for testing purposes.
+    """
     TESTING = True
     SQLALCHEMY_DATABASE_URI = "sqlite://"
 
