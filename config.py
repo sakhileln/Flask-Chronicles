@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 
 # Get the absolute path to the directory where the current script is located
 basedir = os.path.abspath(os.path.dirname(__file__))
-load_dotenv(os.path.join(basedir, '.env'))
+load_dotenv(os.path.join(basedir, ".env"))
 
 
 # pylint: disable=too-few-public-methods
