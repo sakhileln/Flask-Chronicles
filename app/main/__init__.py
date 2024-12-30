@@ -9,5 +9,5 @@ and account management.
 from flask import Blueprint
 
 bp = Blueprint("main", __name__)
-# pylint: disable=wrong-import-position
+# pylint: disable=wrong-import-position,cyclic-import
 from app.main import routes
