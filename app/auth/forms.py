@@ -13,7 +13,6 @@ Classes:
 import sqlalchemy as sa
 from flask_wtf import FlaskForm
 from flask_babel import _, lazy_gettext as _l
-import sqlalchemy as sa
 from wtforms import (
     StringField,
     PasswordField,
