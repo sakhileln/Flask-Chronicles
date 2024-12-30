@@ -18,9 +18,10 @@ from time import time
 from flask_login import UserMixin
 import sqlalchemy as sa
 import sqlalchemy.orm as so
+from flask import current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
-from app import app, db, login
+from app import db, login
 
 
 # Association table for followers (many-to-many relationship)
@@ -211,7 +212,7 @@ class User(UserMixin, db.Model):
         """
         return jwt.encode(
             {"reset_password": self.id, "exp": time() + expires_in},
-            app.config["SECRET_KEY"],
+            current_app.config["SECRET_KEY"],
             algorithm="HS256",
         )
 
@@ -230,9 +231,9 @@ class User(UserMixin, db.Model):
         """
         # pylint: disable=redefined-builtin
         try:
-            id = jwt.decode(token, app.config["SECRET_KEY"], algorithms=["HS256"])[
-                "reset_password"
-            ]
+            id = jwt.decode(
+                token, current_app.config["SECRET_KEY"], algorithms=["HS256"]
+            )["reset_password"]
         except jwt.exceptions.InvalidTokenError as e:
             print(f"Invalid token error: {e}")
             return

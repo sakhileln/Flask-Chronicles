@@ -4,11 +4,12 @@ It defines custom error pages for HTTP 404 (Not Found) and HTTP 500 (Internal Se
 """
 
 from flask import render_template
-from app import app, db
+from app import db
+from app.errors import bp
 
 
 # pylint: disable=unused-argument
-@app.errorhandler(404)
+@bp.app_errorhandler(404)
 def not_found_error(error):
     """
     Handles 404 (Not Found) errors in the application.
@@ -22,11 +23,11 @@ def not_found_error(error):
     Returns:
         Response: The rendered '404.html' template along with the HTTP 404 status code.
     """
-    return render_template("404.html"), 404
+    return render_template("errors/404.html"), 404
 
 
 # pylint: disable=unused-argument
-@app.errorhandler(500)
+@bp.app_errorhandler(500)
 def internal_error(error):
     """
     Handles 500 (Internal Server Error) errors in the application.
@@ -42,4 +43,4 @@ def internal_error(error):
         Response: The rendered '500.html' template along with the HTTP 500 status code.
     """
     db.session.rollback()
-    return render_template("500.html"), 500
+    return render_template("errors/500.html"), 500

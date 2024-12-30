@@ -14,7 +14,7 @@ This module sets up the core components of a Flask application, including:
 import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
 import os
-from flask import Flask, request
+from flask import Flask, request, current_app
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
@@ -36,60 +36,108 @@ def get_locale():
     Returns:
         str: The best matching locale as a string, or None if no match is found.
     """
-    return request.accept_languages.best_match(app.config["LANGUAGES"])
+    return request.accept_languages.best_match(current_app.config["LANGUAGES"])
 
 
 # Initialize the Flask application and other extensions
-app = Flask(__name__)
-app.config.from_object(Config)
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-login = LoginManager(app)
-login.login_view = "login"
+db = SQLAlchemy()
+migrate = Migrate()
+login = LoginManager()
+login.login_view = "auth.login"
 login.login_message = _l("Please log in to access this page.")
-mail = Mail(app)
-moment = Moment(app)
-babel = Babel(app, locale_selector=get_locale)
+mail = Mail()
+moment = Moment()
+babel = Babel()
 
-# Logging configuration to handle errors and send notifications
-if not app.debug:
-    if app.config["MAIL_SERVER"]:
-        # pylint: disable=invalid-name
-        auth = None
-        if app.config["MAIL_USERNAME"] or app.config["MAIL_PASSWORD"]:
-            auth = (app.config["MAIL_USERNAME"], app.config["MAIL_PASSWORD"])
-        # pylint: disable=invalid-name
-        secure = None
-        if app.config["MAIL_USE_TLS"]:
-            secure = ()
-        mail_handler = SMTPHandler(
-            mailhost=(app.config["MAIL_SERVER"], app.config["MAIL_PORT"]),
-            fromaddr="no-reply@" + app.config["MAIL_SERVER"],
-            toaddrs=app.config["ADMINS"],
-            subject="⛔ Flask Chronicles Failure❗",
-            credentials=auth,
-            secure=secure,
+
+def create_app(config_class=Config):
+    """
+    Create and configure the Flask application.
+
+    This function initializes the Flask application with the specified
+    configuration class. It sets up extensions such as SQLAlchemy,
+    Flask-Migrate, Flask-Login, Flask-Mail, Flask-Moment, and Flask-Babel.
+    Additionally, it registers application blueprints for error handling,
+    authentication, main functionality, and command-line interface.
+
+    Args:
+        config_class (Config): The configuration class to use for the app.
+                            Defaults to the base Config class.
+
+    Returns:
+        Flask: The configured Flask application instance.
+    """
+
+    app = Flask(__name__)
+    app.config.from_object(config_class)
+
+    db.init_app(app)
+    migrate.init_app(app, db)
+    login.init_app(app)
+    mail.init_app(app)
+    moment.init_app(app)
+    babel.init_app(app, locale_selector=get_locale)
+
+    # pylint: disable=import-outside-toplevel
+    from app.errors import bp as errors_bp
+
+    app.register_blueprint(errors_bp)
+    # pylint: disable=import-outside-toplevel
+    from app.auth import bp as auth_bp
+
+    app.register_blueprint(auth_bp, url_prefix="/auth")
+    # pylint: disable=import-outside-toplevel
+    from app.main import bp as main_bp
+
+    app.register_blueprint(main_bp)
+    # pylint: disable=import-outside-toplevel
+    from app.cli import bp as cli_bp
+
+    app.register_blueprint(cli_bp)
+
+    # Logging configuration to handle errors and send notifications
+    if not app.debug and not app.testing:
+        if app.config["MAIL_SERVER"]:
+            # pylint: disable=invalid-name
+            auth = None
+            if app.config["MAIL_USERNAME"] or app.config["MAIL_PASSWORD"]:
+                auth = (app.config["MAIL_USERNAME"], app.config["MAIL_PASSWORD"])
+            # pylint: disable=invalid-name
+            secure = None
+            if app.config["MAIL_USE_TLS"]:
+                secure = ()
+            mail_handler = SMTPHandler(
+                mailhost=(app.config["MAIL_SERVER"], app.config["MAIL_PORT"]),
+                fromaddr="no-reply@" + app.config["MAIL_SERVER"],
+                toaddrs=app.config["ADMINS"],
+                subject="⛔ Flask Chronicles Failure❗",
+                credentials=auth,
+                secure=secure,
+            )
+            mail_handler.setLevel(logging.ERROR)
+            app.logger.addHandler(mail_handler)
+
+        # File handler for logging application events to a file
+        if not os.path.exists("logs"):
+            os.mkdir("logs")
+        file_handler = RotatingFileHandler(
+            "logs/flask_chronicles.log", maxBytes=10240, backupCount=10
         )
-        mail_handler.setLevel(logging.ERROR)
-        app.logger.addHandler(mail_handler)
-
-    # File handler for logging application events to a file
-    if not os.path.exists("logs"):
-        os.mkdir("logs")
-    file_handler = RotatingFileHandler(
-        "logs/flask_chronicles.log", maxBytes=10240, backupCount=10
-    )
-    file_handler.setFormatter(
-        logging.Formatter(
-            "%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]"
+        file_handler.setFormatter(
+            logging.Formatter(
+                "%(asctime)s %(levelname)s: %(message)s "
+                + "[in %(pathname)s:%(lineno)d]"
+            )
         )
-    )
-    file_handler.setLevel(logging.INFO)
-    app.logger.addHandler(file_handler)
+        file_handler.setLevel(logging.INFO)
+        app.logger.addHandler(file_handler)
 
-    app.logger.setLevel(logging.INFO)
-    app.logger.info("Flask Chronicles startup")
+        app.logger.setLevel(logging.INFO)
+        app.logger.info("Flask Chronicles startup")
 
-# Import application routes, models, and error handlers
+    return app
+
+
+# Import application models
 # pylint: disable=wrong-import-position
-from app import routes, models, errors
+from app import models

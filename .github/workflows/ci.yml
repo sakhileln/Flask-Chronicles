@@ -25,7 +25,7 @@ jobs:
           python -m pip install black
       - name: Check code formatting with black
         run: |
-          black --check --diff config.py flask_chronicles.py tests.py app/forms.py app/routes.py app/models.py app/__init__.py
+          black --check --diff config.py flask_chronicles.py tests.py app/*
 
   lint:
     runs-on: ubuntu-latest
