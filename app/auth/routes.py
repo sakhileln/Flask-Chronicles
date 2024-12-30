@@ -23,20 +23,17 @@ templates, and `flash` to display messages for user actions.
 """
 
 # Standard library imports
-from datetime import datetime, timezone
 from urllib.parse import urlsplit
 
 # Third-party imports
 import sqlalchemy as sa
-from flask import render_template, flash, redirect, url_for, request, g
+from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user
 from flask_babel import _
-from langdetect import detect, LangDetectException
 
 # Local application imports
 # pylint: disable=cyclic-import
 from app import db
-from app.ggl_translate import translate
 
 # pylint: disable=cyclic-import
 from app.models import User
