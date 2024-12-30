@@ -24,7 +24,6 @@ templates, and `flash` to display messages for user actions.
 
 # Standard library imports
 from datetime import datetime, timezone
-from urllib.parse import urlsplit
 
 # Third-party imports
 import sqlalchemy as sa
