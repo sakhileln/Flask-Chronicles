@@ -176,8 +176,8 @@ def follow(username):
         db.session.commit()
         flash(_("You are following %(username)s!", username=username))
         return redirect(url_for("main.user", username=username))
-    else:
-        return redirect(url_for("main.index"))
+    
+    return redirect(url_for("main.index"))
 
 
 @bp.route("/unfollow/<username>", methods=["POST"])
@@ -200,8 +200,8 @@ def unfollow(username):
         db.session.commit()
         flash(_("You are not following %(username)s.", username=username))
         return redirect(url_for("main.user", username=username))
-    else:
-        return redirect(url_for("main.index"))
+    
+    return redirect(url_for("main.index"))
 
 
 @bp.route("/explore")
