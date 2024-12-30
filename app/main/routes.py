@@ -164,6 +164,7 @@ def follow(username):
     """
     form = EmptyForm()
     if form.validate_on_submit():
+        # pylint: diable=redefined-outer-name
         user = db.session.scalar(sa.select(User).where(User.username == username))
         if user is None:
             flash(_("User %(username)s not found.", username=username))
