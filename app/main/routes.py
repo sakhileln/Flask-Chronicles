@@ -188,6 +188,7 @@ def unfollow(username):
     """
     form = EmptyForm()
     if form.validate_on_submit():
+        # pylint: disable=redefined-outer-name
         user = db.session.scalar(sa.select(User).where(User.username == username))
         if user is None:
             flash(_("User %(username)s not found.", username=username))
