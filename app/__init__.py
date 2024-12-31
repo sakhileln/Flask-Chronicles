@@ -22,6 +22,7 @@ from flask_mail import Mail
 from flask_moment import Moment
 from flask_babel import Babel, lazy_gettext as _l
 from config import Config
+from elasticsearch import Elasticsearch
 
 
 def get_locale():
@@ -94,6 +95,9 @@ def create_app(config_class=Config):
     from app.cli import bp as cli_bp
 
     app.register_blueprint(cli_bp)
+
+    app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
+        if app.config['ELASTICSEARCH_URL'] else None
 
     # Logging configuration to handle errors and send notifications
     if not app.debug and not app.testing:
