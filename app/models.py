@@ -242,7 +242,7 @@ class User(UserMixin, db.Model):
 
 
 # pylint: disable=too-few-public-methods
-class Post(db.Model):
+class Post(SearchableMixin, db.Model):
     """
     A class representing a post in the database.
 
