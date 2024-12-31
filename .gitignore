@@ -38,3 +38,6 @@ nosetests.xml
 venv
 app.db
 microblog.log*
+
+# Environment variables
+.env
