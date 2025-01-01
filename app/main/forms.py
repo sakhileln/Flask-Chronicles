@@ -96,9 +96,23 @@ class PostForm(FlaskForm):
 
 
 class SearchForm(FlaskForm):
+    """
+    A form for searching with a single input field.
+
+    This form is designed to handle search queries. It includes 
+    a required string field for the search term and disables CSRF 
+    protection for simplicity in GET requests.
+    """
     q = StringField(_l('Search'), validators=[DataRequired()])
 
     def __init__(self, *args, **kwargs):
+        """
+        Initializes the SearchForm instance.
+
+        If no formdata is provided, it defaults to using the query 
+        parameters from the request. CSRF protection is disabled 
+        by default.
+        """
         if 'formdata' not in kwargs:
             kwargs['formdata'] = request.args
         if 'meta' not in kwargs:
