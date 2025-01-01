@@ -45,6 +45,7 @@ from app.main.forms import (
     EditProfileForm,
     EmptyForm,
     PostForm,
+    SearchForm,
 )
 
 from app.main import bp
@@ -57,8 +58,9 @@ def before_request():
     'last_seen' timestamp if the user is authenticated.
     """
     if current_user.is_authenticated:
-        current_user.last_seen = datetime.now(timezone.utc)
+        current_user.last_seen = datetime.now(timezone.utc) 
         db.session.commit()
+        g.search_form = SearchForm()
     g.locale = str(get_locale())
 
 
