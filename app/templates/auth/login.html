@@ -20,7 +20,7 @@
         </p>
         <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
         <p>{{ form.submit() }}</p>
-        <p>{{ _("New User?") }} <a href="{{ url_for('register') }}">{{ _("Click to Register!") }}</a></p>
-        <p>{{ _("Forgot Password?") }} <a href="{{ url_for('reset_password_request') }}">{{ _("Click to Reset It") }}</a></p>
+        <p>{{ _("New User?") }} <a href="{{ url_for('auth.register') }}">{{ _("Click to Register!") }}</a></p>
+        <p>{{ _("Forgot Password?") }} <a href="{{ url_for('auth.reset_password_request') }}">{{ _("Click to Reset It") }}</a></p>
     </form>
 {% endblock%}
