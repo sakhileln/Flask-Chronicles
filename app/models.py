@@ -32,6 +32,7 @@ class SearchableMixin:
     This class enables models to integrate with a search index and provides methods to
     manage, query, and update the index as data changes in the database.
     """
+
     @classmethod
     def search(cls, expression, page, per_page):
         """
