@@ -43,7 +43,8 @@ class SearchableMixin:
             per_page (int): The number of results to return per page.
 
         Returns:
-            tuple: A tuple containing a list of matching model instances and the total number of matches.
+            tuple: A tuple containing a list of matching model instances and the
+            total number of matches.
         """
         ids, total = query_index(cls.__tablename__, expression, page, per_page)
         if total == 0:
