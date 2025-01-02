@@ -1,13 +1,9 @@
 {% extends "base.html" %}
-{% import "bootstrap_wtf.html" as wtf %}
 
 {% block content %}
-    <h1>{{ _('Hi, %(username)s!', username=current_user.username) }}</h1>
-    {% if form %}
-    {{ wtf.quick_form(form) }}
-    {% endif %}
+    <h1>{{ _('Search Results') }}</h1>
     {% for post in posts %}
-        {% include '_post.html' %}
+    {% include '_post.html' %}
     {% endfor %}
     <nav aria-label="Post navigation">
         <ul class="pagination">

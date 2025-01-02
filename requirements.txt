@@ -12,6 +12,8 @@ click==8.1.7
 coverage==7.6.8
 deep-translator==1.11.4
 dnspython==2.7.0
+elastic-transport==8.15.1
+elasticsearch==8.17.0
 email_validator==2.2.0
 Flask==3.1.0
 flask-babel==4.0.0

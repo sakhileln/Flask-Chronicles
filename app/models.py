@@ -22,6 +22,100 @@ from flask import current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 from app import db, login
+from app.search import add_to_index, remove_from_index, query_index
+
+
+class SearchableMixin:
+    """
+    A mixin class to provide search indexing and query capabilities for SQLAlchemy models.
+
+    This class enables models to integrate with a search index and provides methods to
+    manage, query, and update the index as data changes in the database.
+    """
+
+    @classmethod
+    def search(cls, expression, page, per_page):
+        """
+        Perform a search on the index associated with the model's table.
+
+        Args:
+            expression (str): The search query expression.
+            page (int): The current page number for pagination.
+            per_page (int): The number of results to return per page.
+
+        Returns:
+            tuple: A tuple containing a list of matching model instances and the
+            total number of matches.
+        """
+        ids, total = query_index(cls.__tablename__, expression, page, per_page)
+        if total == 0:
+            return [], 0
+        # pylint: disable=consider-using-enumerate
+        when = []
+        for i in range(len(ids)):
+            when.append((ids[i], i))
+        query = (
+            sa.select(cls).where(cls.id.in_(ids)).order_by(db.case(*when, value=cls.id))
+        )
+        return db.session.scalars(query), total
+
+    @classmethod
+    def before_commit(cls, session):
+        """
+        Capture changes in the session before a commit.
+
+        Args:
+            session (Session): The SQLAlchemy session instance.
+
+        This method records the new, updated, and deleted objects in the session
+        to facilitate indexing updates after the commit.
+        """
+        # pylint: disable=protected-access
+        session._changes = {
+            "add": list(session.new),
+            "update": list(session.dirty),
+            "delete": list(session.deleted),
+        }
+
+    @classmethod
+    def after_commit(cls, session):
+        """
+        Update the search index based on changes after a commit.
+
+        Args:
+            session (Session): The SQLAlchemy session instance.
+
+        This method adds, updates, or removes objects from the search index
+        depending on their status in the session's changes.
+        """
+        # pylint: disable=protected-access
+        for obj in session._changes["add"]:
+            if isinstance(obj, SearchableMixin):
+                add_to_index(obj.__tablename__, obj)
+        # pylint: disable=protected-access
+        for obj in session._changes["update"]:
+            if isinstance(obj, SearchableMixin):
+                add_to_index(obj.__tablename__, obj)
+        # pylint: disable=protected-access
+        for obj in session._changes["delete"]:
+            if isinstance(obj, SearchableMixin):
+                remove_from_index(obj.__tablename__, obj)
+        session._changes = None
+
+    @classmethod
+    def reindex(cls):
+        """
+        Reindex all records of the model's table.
+
+        This method iterates over all rows of the model's table in the database
+        and updates their entries in the search index.
+        """
+        for obj in db.session.scalars(sa.select(cls)):
+            add_to_index(cls.__tablename__, obj)
+
+
+db.event.listen(db.session, "before_commit", SearchableMixin.before_commit)
+db.event.listen(db.session, "after_commit", SearchableMixin.after_commit)
 
 
 # Association table for followers (many-to-many relationship)
@@ -240,8 +334,23 @@ class User(UserMixin, db.Model):
         return db.session.get(User, id)
 
 
+# pylint: disable=W0622
+# Flask-Login user loader function
+@login.user_loader
+def load_user(id):
+    """
+    Loads a user from the database by their ID.
+
+    Args:
+        id (int): The ID of the user to load.
+    Returns:
+        User: The user object corresponding to the given ID, or None if not found.
+    """
+    return db.session.get(User, int(id))
+
+
 # pylint: disable=too-few-public-methods
-class Post(db.Model):
+class Post(SearchableMixin, db.Model):
     """
     A class representing a post in the database.
 
@@ -256,6 +365,7 @@ class Post(db.Model):
         __repr__: Returns a string representing of the Post instance.
     """
 
+    __searchable__ = ["body"]
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     body: so.Mapped[str] = so.mapped_column(sa.String(140))
     timestamp: so.Mapped[datetime] = so.mapped_column(
@@ -273,18 +383,3 @@ class Post(db.Model):
             str: Astring in the format "<Post body>" for debugging.
         """
         return f"<Post {self.body}>"
-
-
-# pylint: disable=W0622
-# Flask-Login user loader function
-@login.user_loader
-def load_user(id):
-    """
-    Loads a user from the database by their ID.
-
-    Args:
-        id (int): The ID of the user to load.
-    Returns:
-        User: The user object corresponding to the given ID, or None if not found.
-    """
-    return db.session.get(User, int(id))
