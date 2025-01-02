@@ -26,8 +26,25 @@ from app.search import add_to_index, remove_from_index, query_index
 
 
 class SearchableMixin:
+    """
+    A mixin class to provide search indexing and query capabilities for SQLAlchemy models.
+
+    This class enables models to integrate with a search index and provides methods to
+    manage, query, and update the index as data changes in the database.
+    """
     @classmethod
     def search(cls, expression, page, per_page):
+        """
+        Perform a search on the index associated with the model's table.
+
+        Args:
+            expression (str): The search query expression.
+            page (int): The current page number for pagination.
+            per_page (int): The number of results to return per page.
+
+        Returns:
+            tuple: A tuple containing a list of matching model instances and the total number of matches.
+        """
         ids, total = query_index(cls.__tablename__, expression, page, per_page)
         if total == 0:
             return [], 0
@@ -41,6 +58,15 @@ class SearchableMixin:
 
     @classmethod
     def before_commit(cls, session):
+        """
+        Capture changes in the session before a commit.
+
+        Args:
+            session (Session): The SQLAlchemy session instance.
+
+        This method records the new, updated, and deleted objects in the session
+        to facilitate indexing updates after the commit.
+        """
         session._changes = {
             "add": list(session.new),
             "update": list(session.dirty),
@@ -49,6 +75,15 @@ class SearchableMixin:
 
     @classmethod
     def after_commit(cls, session):
+        """
+        Update the search index based on changes after a commit.
+
+        Args:
+            session (Session): The SQLAlchemy session instance.
+
+        This method adds, updates, or removes objects from the search index
+        depending on their status in the session's changes.
+        """
         for obj in session._changes["add"]:
             if isinstance(obj, SearchableMixin):
                 add_to_index(obj.__tablename__, obj)
@@ -62,6 +97,12 @@ class SearchableMixin:
 
     @classmethod
     def reindex(cls):
+        """
+        Reindex all records of the model's table.
+
+        This method iterates over all rows of the model's table in the database
+        and updates their entries in the search index.
+        """
         for obj in db.session.scalars(sa.select(cls)):
             add_to_index(cls.__tablename__, obj)
 
