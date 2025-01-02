@@ -69,6 +69,7 @@ class SearchableMixin:
         This method records the new, updated, and deleted objects in the session
         to facilitate indexing updates after the commit.
         """
+        # pylint: disable=protected-access
         session._changes = {
             "add": list(session.new),
             "update": list(session.dirty),
@@ -86,12 +87,15 @@ class SearchableMixin:
         This method adds, updates, or removes objects from the search index
         depending on their status in the session's changes.
         """
+        # pylint: disable=protected-access
         for obj in session._changes["add"]:
             if isinstance(obj, SearchableMixin):
                 add_to_index(obj.__tablename__, obj)
+        # pylint: disable=protected-access
         for obj in session._changes["update"]:
             if isinstance(obj, SearchableMixin):
                 add_to_index(obj.__tablename__, obj)
+        # pylint: disable=protected-access
         for obj in session._changes["delete"]:
             if isinstance(obj, SearchableMixin):
                 remove_from_index(obj.__tablename__, obj)
