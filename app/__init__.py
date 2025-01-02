@@ -96,8 +96,11 @@ def create_app(config_class=Config):
 
     app.register_blueprint(cli_bp)
 
-    app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
-        if app.config['ELASTICSEARCH_URL'] else None
+    app.elasticsearch = (
+        Elasticsearch([app.config["ELASTICSEARCH_URL"]])
+        if app.config["ELASTICSEARCH_URL"]
+        else None
+    )
 
     # Logging configuration to handle errors and send notifications
     if not app.debug and not app.testing:
