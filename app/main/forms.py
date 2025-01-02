@@ -118,4 +118,5 @@ class SearchForm(FlaskForm):
             kwargs["formdata"] = request.args
         if "meta" not in kwargs:
             kwargs["meta"] = {"csrf": False}
+        # pylint: disable=super-with-arguments
         super(SearchForm, self).__init__(*args, **kwargs)
