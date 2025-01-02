@@ -34,27 +34,28 @@ class SearchableMixin:
         when = []
         for i in range(len(ids)):
             when.append((ids[i], i))
-        query = sa.select(cls).where(cls.id.in_(ids)).order_by(
-            db.case(*when, value=cls.id))
+        query = (
+            sa.select(cls).where(cls.id.in_(ids)).order_by(db.case(*when, value=cls.id))
+        )
         return db.session.scalars(query), total
 
     @classmethod
     def before_commit(cls, session):
         session._changes = {
-            'add': list(session.new),
-            'update': list(session.dirty),
-            'delete': list(session.deleted)
+            "add": list(session.new),
+            "update": list(session.dirty),
+            "delete": list(session.deleted),
         }
 
     @classmethod
     def after_commit(cls, session):
-        for obj in session._changes['add']:
+        for obj in session._changes["add"]:
             if isinstance(obj, SearchableMixin):
                 add_to_index(obj.__tablename__, obj)
-        for obj in session._changes['update']:
+        for obj in session._changes["update"]:
             if isinstance(obj, SearchableMixin):
                 add_to_index(obj.__tablename__, obj)
-        for obj in session._changes['delete']:
+        for obj in session._changes["delete"]:
             if isinstance(obj, SearchableMixin):
                 remove_from_index(obj.__tablename__, obj)
         session._changes = None
@@ -65,9 +66,8 @@ class SearchableMixin:
             add_to_index(cls.__tablename__, obj)
 
 
-db.event.listen(db.session, 'before_commit', SearchableMixin.before_commit)
-db.event.listen(db.session, 'after_commit', SearchableMixin.after_commit)
-
+db.event.listen(db.session, "before_commit", SearchableMixin.before_commit)
+db.event.listen(db.session, "after_commit", SearchableMixin.after_commit)
 
 
 # Association table for followers (many-to-many relationship)
@@ -316,7 +316,8 @@ class Post(SearchableMixin, db.Model):
     Methods:
         __repr__: Returns a string representing of the Post instance.
     """
-    __searchable__ = ['body']
+
+    __searchable__ = ["body"]
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     body: so.Mapped[str] = so.mapped_column(sa.String(140))
     timestamp: so.Mapped[datetime] = so.mapped_column(
@@ -334,6 +335,3 @@ class Post(SearchableMixin, db.Model):
             str: Astring in the format "<Post body>" for debugging.
         """
         return f"<Post {self.body}>"
-
-
-
