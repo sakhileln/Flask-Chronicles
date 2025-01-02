@@ -22,7 +22,6 @@ Each route uses Flask's `render_template` to render the corresponding HTML
 templates, and `flash` to display messages for user actions.
 """
 
-# pylint: disable=cyclic-import
 # Standard library imports
 from datetime import datetime, timezone
 
@@ -49,6 +48,7 @@ from app.main.forms import (
     SearchForm,
 )
 
+# pylint: disable=cyclic-import
 from app.main import bp
 
 
@@ -273,13 +273,13 @@ def search():
     """
     Handle search requests and return search results.
 
-    This function validates the search form input, retrieves the search 
-    results based on the query, and handles pagination. If the search 
-    form is not valid, it redirects to the explore page. The function 
+    This function validates the search form input, retrieves the search
+    results based on the query, and handles pagination. If the search
+    form is not valid, it redirects to the explore page. The function
     returns a rendered template displaying the search results.
 
     Returns:
-        Response: Rendered HTML template with search results, including 
+        Response: Rendered HTML template with search results, including
         pagination links for next and previous pages.
     """
     if not g.search_form.validate():
