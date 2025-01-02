@@ -49,6 +49,7 @@ class SearchableMixin:
         ids, total = query_index(cls.__tablename__, expression, page, per_page)
         if total == 0:
             return [], 0
+        # pylint: disable=consider-using-enumerate
         when = []
         for i in range(len(ids)):
             when.append((ids[i], i))
